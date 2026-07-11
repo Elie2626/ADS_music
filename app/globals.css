@@ -1,26 +1,62 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Thème Violet néon : nuit violette, lavande néon, touche corail */
+  --color-ink: #12101a;
+  --color-ink-2: #191624;
+  --color-ink-3: #201c2e;
+  --color-line: #322c48;
+  --color-cream: #f0edfb;
+  --color-cream-dim: #a49fc0;
+  --color-acid: #9d8cff;
+  --color-acid-deep: #6f5ce8;
+  --color-ember: #f76b8a;
+  --font-display: var(--font-bricolage);
+  --font-body: var(--font-instrument);
+  --font-mono: var(--font-jetbrains);
 }
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html {
+  scroll-behavior: smooth;
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-ink);
+  color: var(--color-cream);
+  font-family: var(--font-body), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+::selection {
+  background: var(--color-acid);
+  color: var(--color-ink);
+}
+/* Focus visible partout — accessibilité */
+:focus-visible {
+  outline: 2px solid var(--color-acid);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+/* Marquee */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+/* Equalizer bars (loading / playing) */
+@keyframes eq {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+.eq-bar {
+  transform-origin: bottom;
+  animation: eq 0.9s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .eq-bar {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
 }
