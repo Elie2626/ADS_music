@@ -192,6 +192,35 @@ export default function Home() {
               <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </Link>
           </motion.div>
+
+          {/* Démo audio */}
+          <motion.div
+            {...fadeUp}
+            className="mt-6 rounded-2xl border border-acid/40 bg-ink-2 p-6 sm:p-8"
+          >
+            <p className="font-mono text-xs text-acid tracking-[0.25em] uppercase mb-5">
+              Écoutez un exemple
+            </p>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/audio/demo-cover.jpg"
+                alt="Pochette de la pub de démonstration Onde en boucle"
+                width={112}
+                height={112}
+                className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl border border-line shrink-0 object-cover"
+              />
+              <div className="flex-1 w-full min-w-0">
+                <h3 className="font-display text-xl" style={{ fontWeight: 600 }}>
+                  Onde en boucle
+                </h3>
+                <p className="text-sm text-cream-dim mb-4">
+                  Pub générée par ONDE · extrait de 1 min 30
+                </p>
+                <WaveformPlayer duration={90} audioUrl="/audio/demo-onde.mp3" />
+              </div>
+            </div>
+          </motion.div>
         </section>
 
         {/* ————— PROCESS ————— */}
@@ -244,35 +273,6 @@ export default function Home() {
               </motion.article>
             ))}
           </div>
-
-          {/* Démo audio */}
-          <motion.div
-            {...fadeUp}
-            className="mt-10 rounded-2xl border border-acid/40 bg-ink-2 p-6 sm:p-8"
-          >
-            <p className="font-mono text-xs text-acid tracking-[0.25em] uppercase mb-5">
-              Écoutez un exemple
-            </p>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/audio/demo-cover.jpg"
-                alt="Pochette de la pub de démonstration Onde en boucle"
-                width={112}
-                height={112}
-                className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl border border-line shrink-0 object-cover"
-              />
-              <div className="flex-1 w-full min-w-0">
-                <h3 className="font-display text-xl" style={{ fontWeight: 600 }}>
-                  Onde en boucle
-                </h3>
-                <p className="text-sm text-cream-dim mb-4">
-                  Pub générée par ONDE · extrait de 1 min 30
-                </p>
-                <WaveformPlayer duration={90} audioUrl="/audio/demo-onde.mp3" />
-              </div>
-            </div>
-          </motion.div>
         </section>
 
         {/* ————— STYLES ————— */}
@@ -284,7 +284,7 @@ export default function Home() {
           >
             Un style pour
             <br />
-            <span className="text-cream-dim">chaque commerce.</span>
+            <span className="text-cream-dim">chaque business.</span>
           </motion.h2>
 
           <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

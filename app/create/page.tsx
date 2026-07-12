@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -38,7 +39,8 @@ const slide = {
 };
 
 export default function CreatePage() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  const router = useRouter();
   const [phase, setPhase] = useState<Phase>("brief");
   const [saved, setSaved] = useState(false);
   const [genError, setGenError] = useState("");
@@ -110,6 +112,28 @@ export default function CreatePage() {
   };
 
   const selectedStyle = MUSIC_STYLES.find((s) => s.id === brief.styleId);
+
+  // Création réservée aux comptes : on redirige vers la connexion
+  useEffect(() => {
+    if (!loading && !user) router.replace("/login?next=/create");
+  }, [loading, user, router]);
+
+  if (loading || !user) {
+    return (
+      <>
+        <Navbar />
+        <main
+          id="contenu"
+          className="flex-1 pt-24 flex items-center justify-center min-h-[60vh]"
+        >
+          <Loader2
+            className="w-6 h-6 animate-spin text-cream-dim"
+            aria-label="Chargement"
+          />
+        </main>
+      </>
+    );
+  }
 
   return (
     <>
