@@ -71,7 +71,17 @@ export default function WaveformPlayer({
 
   return (
     <div className="flex items-center gap-4 w-full">
-      {audioUrl && <audio ref={audioRef} src={audioUrl} preload="metadata" />}
+      {audioUrl && (
+        <audio
+          ref={audioRef}
+          src={audioUrl}
+          preload="metadata"
+          onEnded={() => {
+            setPlaying(false);
+            setProgress(0);
+          }}
+        />
+      )}
       <button
         type="button"
         onClick={() => setPlaying((p) => !p)}
@@ -101,8 +111,9 @@ export default function WaveformPlayer({
               key={i}
               className="flex-1 rounded-sm transition-colors duration-150"
               style={{
-                height: `${h * 100}%`,
-                background: active ? accent : "rgba(240,237,251,0.16)",
+                minWidth: 1,
+                height: `${(h * 100).toFixed(2)}%`,
+                background: active ? accent : "rgba(240,237,251,0.3)",
               }}
             />
           );

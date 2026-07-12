@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { Center } from "@react-three/drei";
-import { Suspense, useMemo, useRef } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
@@ -63,18 +63,43 @@ function Digits({ label }: { label: string }) {
   );
 }
 
+/* Ne monte le Canvas que sur écran large : multiplier les contextes WebGL fait planter les petits GPU */
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 640px)");
+    const update = () => setIsDesktop(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+  return isDesktop;
+}
+
 export default function StatNumber3D({ label }: { label: string }) {
+  const isDesktop = useIsDesktop();
   return (
     <div className="h-32 sm:h-36" role="img" aria-label={label}>
-      <Canvas
-        camera={{ position: [0, 0, 5.2], fov: 42 }}
-        dpr={[1, 2]}
-        gl={{ antialias: true, alpha: true }}
-      >
-        <Suspense fallback={null}>
-          <Digits label={label} />
-        </Suspense>
-      </Canvas>
+      {isDesktop ? (
+        <Canvas
+          camera={{ position: [0, 0, 5.2], fov: 42 }}
+          dpr={[1, 2]}
+          gl={{ antialias: true, alpha: true }}
+        >
+          <Suspense fallback={null}>
+            <Digits label={label} />
+          </Suspense>
+        </Canvas>
+      ) : (
+        <div className="h-full flex items-center">
+          <span
+            className="font-display text-6xl tabular-nums text-acid"
+            style={{ fontWeight: 800, textShadow: "0 0 32px rgba(157,140,255,0.45)" }}
+          >
+            {label}
+          </span>
+        </div>
+      )}
     </div>
   );
 }

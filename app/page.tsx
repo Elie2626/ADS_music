@@ -12,16 +12,18 @@ import {
   Sparkles,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import WaveformPlayer from "@/components/WaveformPlayer";
 import Footer from "@/components/Footer";
 import { MUSIC_STYLES } from "@/lib/styles";
 
 const Scene3D = dynamic(() => import("@/components/Scene3D"), { ssr: false });
 const StatNumber3D = dynamic(() => import("@/components/StatNumber3D"), { ssr: false });
 
+/*
+ * Les sections restent toujours visibles : pas d'opacité 0 dépendante
+ * d'une animation au scroll (fragile sur mobile / onglets en veille).
+ */
 const fadeUp = {
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" },
   transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as const },
 };
 
@@ -242,6 +244,35 @@ export default function Home() {
               </motion.article>
             ))}
           </div>
+
+          {/* Démo audio */}
+          <motion.div
+            {...fadeUp}
+            className="mt-10 rounded-2xl border border-acid/40 bg-ink-2 p-6 sm:p-8"
+          >
+            <p className="font-mono text-xs text-acid tracking-[0.25em] uppercase mb-5">
+              Écoutez un exemple
+            </p>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/audio/demo-cover.jpg"
+                alt="Pochette de la pub de démonstration Onde en boucle"
+                width={112}
+                height={112}
+                className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl border border-line shrink-0 object-cover"
+              />
+              <div className="flex-1 w-full min-w-0">
+                <h3 className="font-display text-xl" style={{ fontWeight: 600 }}>
+                  Onde en boucle
+                </h3>
+                <p className="text-sm text-cream-dim mb-4">
+                  Pub générée par ONDE · extrait de 1 min 30
+                </p>
+                <WaveformPlayer duration={90} audioUrl="/audio/demo-onde.mp3" />
+              </div>
+            </div>
+          </motion.div>
         </section>
 
         {/* ————— STYLES ————— */}
