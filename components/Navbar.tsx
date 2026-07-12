@@ -12,16 +12,17 @@ const NAV_LINKS = [
   { href: "/#styles", label: "Styles" },
   { href: "/#process", label: "Comment ça marche" },
   { href: "/#pricing", label: "Tarifs" },
+  { href: "/audio", label: "Jingle seul" },
 ] as const;
 
 export default function Navbar() {
   const pathname = usePathname();
-  const isCreate = pathname?.startsWith("/create");
+  const isCreate = pathname?.startsWith("/create") || pathname?.startsWith("/audio");
   const { user, loading } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 inset-x-0 z-50 bg-ink/95 backdrop-blur">
+    <header className="fixed top-0 left-0 w-full z-50 bg-ink/95 backdrop-blur">
       <nav
         aria-label="Navigation principale"
         className="mx-auto max-w-7xl px-4 sm:px-6 py-3 flex items-center justify-between"
