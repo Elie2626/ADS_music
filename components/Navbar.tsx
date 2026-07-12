@@ -1,19 +1,27 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AudioWaveform, LogOut } from "lucide-react";
+import { AudioWaveform, LogOut, Menu, X } from "lucide-react";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useAuth } from "@/components/AuthProvider";
+
+const NAV_LINKS = [
+  { href: "/#styles", label: "Styles" },
+  { href: "/#process", label: "Comment ça marche" },
+  { href: "/#pricing", label: "Tarifs" },
+] as const;
 
 export default function Navbar() {
   const pathname = usePathname();
   const isCreate = pathname?.startsWith("/create");
   const { user, loading } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 inset-x-0 z-50">
+    <header className="fixed top-0 inset-x-0 z-50 bg-ink/95 backdrop-blur">
       <nav
         aria-label="Navigation principale"
         className="mx-auto max-w-7xl px-4 sm:px-6 py-3 flex items-center justify-between"
@@ -22,6 +30,7 @@ export default function Navbar() {
           href="/"
           className="flex items-center gap-2 min-h-11 px-2 -ml-2 rounded-md"
           aria-label="ONDE — retour à l'accueil"
+          onClick={() => setMenuOpen(false)}
         >
           <AudioWaveform className="w-6 h-6 text-acid" aria-hidden="true" />
           <span className="font-display font-800 text-xl tracking-tight" style={{ fontWeight: 800 }}>
@@ -29,25 +38,17 @@ export default function Navbar() {
           </span>
         </Link>
 
-        <div className="flex items-center gap-1 sm:gap-2">
-          <Link
-            href="/#styles"
-            className="hidden sm:flex items-center min-h-11 px-4 rounded-md text-sm text-cream-dim hover:text-cream transition-colors"
-          >
-            Styles
-          </Link>
-          <Link
-            href="/#process"
-            className="hidden sm:flex items-center min-h-11 px-4 rounded-md text-sm text-cream-dim hover:text-cream transition-colors"
-          >
-            Comment ça marche
-          </Link>
-          <Link
-            href="/#pricing"
-            className="hidden sm:flex items-center min-h-11 px-4 rounded-md text-sm text-cream-dim hover:text-cream transition-colors"
-          >
-            Tarifs
-          </Link>
+        {/* Nav desktop */}
+        <div className="hidden sm:flex items-center gap-1 sm:gap-2">
+          {NAV_LINKS.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className="flex items-center min-h-11 px-4 rounded-md text-sm text-cream-dim hover:text-cream transition-colors"
+            >
+              {l.label}
+            </Link>
+          ))}
           {!loading &&
             (user ? (
               <>
@@ -55,7 +56,7 @@ export default function Navbar() {
                   href="/dashboard"
                   className="flex items-center min-h-11 px-4 rounded-md text-sm text-cream-dim hover:text-cream transition-colors"
                 >
-                  Mes pubs
+                  Mes devis
                 </Link>
                 <button
                   type="button"
@@ -84,8 +85,83 @@ export default function Navbar() {
             </Link>
           )}
         </div>
+
+        {/* Bouton menu mobile */}
+        <button
+          type="button"
+          onClick={() => setMenuOpen((o) => !o)}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-menu"
+          aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+          className="sm:hidden flex items-center justify-center min-h-11 min-w-11 rounded-md text-cream hover:text-acid transition-colors cursor-pointer"
+        >
+          {menuOpen ? (
+            <X className="w-6 h-6" aria-hidden="true" />
+          ) : (
+            <Menu className="w-6 h-6" aria-hidden="true" />
+          )}
+        </button>
       </nav>
       <div className="h-px bg-gradient-to-r from-transparent via-line to-transparent" />
+
+      {/* Panneau mobile */}
+      {menuOpen && (
+        <div
+          id="mobile-menu"
+          className="sm:hidden border-b border-line bg-ink px-4 pb-6 pt-2 flex flex-col gap-1"
+        >
+          {NAV_LINKS.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center min-h-12 px-3 rounded-md text-base text-cream-dim hover:text-cream hover:bg-ink-2 transition-colors"
+            >
+              {l.label}
+            </Link>
+          ))}
+          {!loading &&
+            (user ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center min-h-12 px-3 rounded-md text-base text-cream-dim hover:text-cream hover:bg-ink-2 transition-colors"
+                >
+                  Mes devis
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    signOut(auth);
+                    setMenuOpen(false);
+                  }}
+                  className="flex items-center gap-2 min-h-12 px-3 rounded-md text-base text-cream-dim hover:text-cream hover:bg-ink-2 transition-colors cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4" aria-hidden="true" />
+                  Se déconnecter
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center min-h-12 px-3 rounded-md text-base text-cream-dim hover:text-cream hover:bg-ink-2 transition-colors"
+              >
+                Connexion
+              </Link>
+            ))}
+          {!isCreate && (
+            <Link
+              href="/create"
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center justify-center min-h-12 mt-2 rounded-full bg-acid text-ink text-base font-semibold hover:bg-cream transition-colors"
+            >
+              Créer ma pub
+            </Link>
+          )}
+        </div>
+      )}
     </header>
   );
 }

@@ -7,14 +7,15 @@ import {
   ArrowRight,
   Check,
   ClipboardList,
+  FileText,
   Music4,
-  Rocket,
   Sparkles,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import WaveformPlayer from "@/components/WaveformPlayer";
 import Footer from "@/components/Footer";
 import { MUSIC_STYLES } from "@/lib/styles";
+import { VIDEO_TIERS } from "@/lib/pricing";
 
 const Scene3D = dynamic(() => import("@/components/Scene3D"), { ssr: false });
 const StatNumber3D = dynamic(() => import("@/components/StatNumber3D"), { ssr: false });
@@ -56,7 +57,7 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="font-mono text-xs sm:text-sm text-acid tracking-[0.25em] uppercase mb-6"
             >
-              Publicité sonore · générée par IA
+              Pubs vidéo & musicales · sur mesure
             </motion.p>
             <motion.h1
               initial={{ opacity: 0, y: 24 }}
@@ -76,9 +77,8 @@ export default function Home() {
               className="mt-8 max-w-xl text-lg text-cream-dim leading-relaxed"
             >
               Décrivez votre entreprise, choisissez un style musical et une
-              ambiance. Notre IA compose un jingle publicitaire professionnel
-              en quelques minutes — prêt pour la radio, les réseaux et vos
-              points de vente.
+              ambiance. Nous créons votre pub complète — jingle et vidéo —
+              prête pour la radio, les réseaux et vos points de vente.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 24 }}
@@ -169,9 +169,9 @@ export default function Home() {
           >
             <div>
               <p className="text-lg text-cream-dim">
-                Un jingle sur mesure via une agence coûte en moyenne{" "}
+                Une pub vidéo sur mesure via une agence coûte en moyenne{" "}
                 <span className="text-cream font-semibold">
-                  entre 500 € et 10 000 €
+                  entre 3 000 € et 15 000 €
                 </span>
                 .
               </p>
@@ -180,8 +180,8 @@ export default function Home() {
                 style={{ fontWeight: 700 }}
               >
                 Chez ONDE, c&apos;est{" "}
-                <span className="text-acid">jusqu&apos;à 300× moins cher</span> —
-                à partir de 29 €.
+                <span className="text-acid">jusqu&apos;à 10× moins cher</span> —
+                à partir de 490 €.
               </p>
             </div>
             <Link
@@ -232,7 +232,7 @@ export default function Home() {
           >
             Trois étapes.
             <br />
-            <span className="text-cream-dim">Zéro studio.</span>
+            <span className="text-cream-dim">Une pub complète.</span>
           </motion.h2>
 
           <div className="mt-16 grid sm:grid-cols-3 gap-6">
@@ -241,19 +241,19 @@ export default function Home() {
                 icon: ClipboardList,
                 num: "01",
                 title: "Décrivez votre pub",
-                text: "Nom de l'entreprise, message clé, style musical, ambiance et durée. Deux minutes chrono.",
+                text: "Entreprise, message clé, style musical, ambiance, budget et délai. Deux minutes chrono.",
               },
               {
                 icon: Music4,
                 num: "02",
-                title: "L'IA compose",
-                text: "Paroles sur mesure et musique originale dans le style choisi. Réécoutez, ajustez, régénérez.",
+                title: "Recevez votre devis",
+                text: "Un concept de pub — jingle et vidéo — avec prix et délai, généré et envoyé par email.",
               },
               {
-                icon: Rocket,
+                icon: FileText,
                 num: "03",
-                title: "Diffusez partout",
-                text: "Téléchargez votre pub en haute qualité, avec licence commerciale. Radio, réseaux, magasin.",
+                title: "On crée votre pub",
+                text: "Notre équipe compose le jingle et produit la vidéo, prêts pour la radio, les réseaux et vos points de vente.",
               },
             ].map((step, i) => (
               <motion.article
@@ -339,48 +339,20 @@ export default function Home() {
             className="font-display text-3xl sm:text-5xl tracking-tight"
             style={{ fontWeight: 700 }}
           >
-            Des tarifs simples<span className="text-acid">.</span>
+            Une pub complète<span className="text-acid">.</span>
           </motion.h2>
+          <motion.p
+            {...fadeUp}
+            className="mt-4 text-cream-dim max-w-lg"
+          >
+            Jingle et vidéo toujours réunis. Décrivez votre projet et recevez un
+            devis personnalisé — ces tarifs sont indicatifs.
+          </motion.p>
 
-          <div className="mt-14 grid sm:grid-cols-3 gap-6 items-stretch">
-            {[
-              {
-                name: "Essai",
-                price: "0 €",
-                unit: "pour tester",
-                features: ["1 génération en aperçu", "Extrait de 15 s", "Filigrane audio"],
-                cta: "Essayer gratuitement",
-                featured: false,
-              },
-              {
-                name: "Pub unique",
-                price: "29 €",
-                unit: "par pub",
-                features: [
-                  "Pub complète jusqu'à 60 s",
-                  "3 régénérations incluses",
-                  "Licence commerciale",
-                  "Fichiers WAV + MP3",
-                ],
-                cta: "Créer ma pub",
-                featured: true,
-              },
-              {
-                name: "Studio",
-                price: "99 €",
-                unit: "par mois",
-                features: [
-                  "10 pubs par mois",
-                  "Régénérations illimitées",
-                  "Déclinaisons multi-formats",
-                  "Support prioritaire",
-                ],
-                cta: "Passer en Studio",
-                featured: false,
-              },
-            ].map((plan, i) => (
+          <div className="mt-10 grid sm:grid-cols-3 gap-6 items-stretch">
+            {VIDEO_TIERS.map((plan, i) => (
               <motion.div
-                key={plan.name}
+                key={plan.id}
                 {...fadeUp}
                 transition={{ ...fadeUp.transition, delay: i * 0.1 }}
                 className={`relative rounded-2xl border p-8 flex flex-col ${
@@ -402,8 +374,9 @@ export default function Home() {
                   >
                     {plan.price}
                   </span>
-                  <span className="text-sm text-cream-dim">{plan.unit}</span>
+                  <span className="text-sm text-cream-dim">{plan.duration}</span>
                 </p>
+                <p className="mt-2 text-sm text-cream-dim">{plan.ideal}</p>
                 <ul className="mt-6 space-y-3 flex-1">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-start gap-2 text-sm text-cream-dim">
@@ -420,7 +393,7 @@ export default function Home() {
                       : "border border-line text-cream hover:border-cream-dim"
                   }`}
                 >
-                  {plan.cta}
+                  Demander un devis
                 </Link>
               </motion.div>
             ))}
@@ -445,11 +418,11 @@ export default function Home() {
               className="relative font-display text-3xl sm:text-5xl tracking-tight"
               style={{ fontWeight: 800 }}
             >
-              On écrit votre jingle ?
+              On crée votre pub ?
             </h2>
             <p className="relative mt-4 text-cream-dim max-w-md mx-auto">
-              Deux minutes pour décrire votre entreprise. Une pub dont vos
-              clients se souviendront pendant des années.
+              Deux minutes pour décrire votre entreprise. Une pub — jingle et
+              vidéo — dont vos clients se souviendront pendant des années.
             </p>
             <Link
               href="/create"

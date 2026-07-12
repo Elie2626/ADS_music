@@ -8,19 +8,19 @@ import {
   ArrowLeft,
   ArrowRight,
   Building2,
-  Download,
+  Check,
+  Clapperboard,
   Loader2,
+  Mail,
   MicVocal,
   Music4,
-  RefreshCw,
-  Timer,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
-import WaveformPlayer from "@/components/WaveformPlayer";
 import { useAuth } from "@/components/AuthProvider";
-import { saveAd } from "@/lib/ads";
-import { musicProvider, type AdBrief, type GeneratedAd } from "@/lib/generation";
-import { DURATIONS, MOODS, MUSIC_STYLES, VOICE_OPTIONS } from "@/lib/styles";
+import { saveDevis } from "@/lib/devis";
+import { BUDGET_RANGES, DEADLINES, VIDEO_TIERS } from "@/lib/pricing";
+import { DURATIONS, MOODS, MUSIC_STYLES } from "@/lib/styles";
+import type { DevisRequest, GeneratedQuote } from "@/app/api/devis/route";
 
 type Phase = "brief" | "generating" | "result";
 
@@ -28,7 +28,7 @@ const STEPS = [
   { id: 0, label: "Entreprise", icon: Building2 },
   { id: 1, label: "Style", icon: Music4 },
   { id: 2, label: "Ambiance", icon: MicVocal },
-  { id: 3, label: "Format", icon: Timer },
+  { id: 3, label: "Projet", icon: Clapperboard },
 ] as const;
 
 const slide = {
@@ -38,43 +38,67 @@ const slide = {
   transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] as const },
 };
 
+type FormState = DevisRequest & {
+  styleId: string;
+  mood: string;
+  duration: number;
+};
+
 export default function CreatePage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>("brief");
-  const [saved, setSaved] = useState(false);
   const [genError, setGenError] = useState("");
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [ad, setAd] = useState<GeneratedAd | null>(null);
+  const [quote, setQuote] = useState<GeneratedQuote | null>(null);
+  const [emailSent, setEmailSent] = useState(false);
 
-  const [brief, setBrief] = useState<AdBrief>({
+  const [form, setForm] = useState<FormState>({
     company: "",
     sector: "",
     message: "",
     styleId: "",
     mood: "",
     duration: 30,
-    voice: "femme",
+    style: "",
+    budget: BUDGET_RANGES[1],
+    deadline: DEADLINES[1],
+    name: "",
+    email: "",
+    phone: "",
   });
 
-  const set = <K extends keyof AdBrief>(key: K, value: AdBrief[K]) => {
-    setBrief((b) => ({ ...b, [key]: value }));
+  const set = <K extends keyof FormState>(key: K, value: FormState[K]) => {
+    setForm((f) => ({ ...f, [key]: value }));
     setErrors((e) => ({ ...e, [key]: "" }));
   };
+
+  const selectedStyle = MUSIC_STYLES.find((s) => s.id === form.styleId);
+
+  useEffect(() => {
+    if (user?.email && !form.email) set("email", user.email);
+    if (user?.displayName && !form.name) set("name", user.displayName);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const validateStep = (): boolean => {
     const e: Record<string, string> = {};
     if (step === 0) {
-      if (!brief.company.trim())
-        e.company = "Indiquez le nom de votre entreprise pour personnaliser le jingle.";
-      if (!brief.message.trim())
-        e.message = "Décrivez le message clé : c'est ce que la pub va chanter.";
+      if (!form.company.trim())
+        e.company = "Indiquez le nom de votre entreprise pour personnaliser votre pub.";
+      if (!form.message.trim())
+        e.message = "Décrivez le message clé de votre pub.";
     }
-    if (step === 1 && !brief.styleId)
+    if (step === 1 && !form.styleId)
       e.styleId = "Choisissez un style musical pour continuer.";
-    if (step === 2 && !brief.mood)
+    if (step === 2 && !form.mood)
       e.mood = "Choisissez une ambiance pour continuer.";
+    if (step === 3) {
+      if (!form.name.trim()) e.name = "Indiquez votre nom.";
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email))
+        e.email = "Entrez un email valide pour recevoir votre devis.";
+    }
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -87,31 +111,43 @@ export default function CreatePage() {
 
   const launch = async () => {
     setPhase("generating");
-    setSaved(false);
     setGenError("");
-    let result: GeneratedAd;
+
+    const payload: DevisRequest = {
+      company: form.company,
+      sector: form.sector,
+      message: form.message,
+      style: `${selectedStyle?.name ?? ""} · ambiance ${form.mood} · format ${form.duration}s`,
+      budget: form.budget,
+      deadline: form.deadline,
+      name: form.name,
+      email: form.email,
+      phone: form.phone,
+    };
+
     try {
-      result = await musicProvider.generate(brief);
+      const res = await fetch("/api/devis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Échec de la génération du devis");
+      setQuote(data.quote);
+      setEmailSent(data.emailSent);
+      setPhase("result");
+      try {
+        await saveDevis(payload, data.quote, user?.uid ?? null);
+      } catch {
+        // le devis reste affiché même si l'enregistrement échoue
+      }
     } catch (err) {
       setGenError(
-        err instanceof Error ? err.message : "La génération a échoué. Réessayez."
+        err instanceof Error ? err.message : "La génération du devis a échoué. Réessayez."
       );
       setPhase("brief");
-      return;
-    }
-    setAd(result);
-    setPhase("result");
-    if (user) {
-      try {
-        await saveAd(user.uid, result);
-        setSaved(true);
-      } catch {
-        // la pub reste affichée même si la sauvegarde échoue
-      }
     }
   };
-
-  const selectedStyle = MUSIC_STYLES.find((s) => s.id === brief.styleId);
 
   // Création réservée aux comptes : on redirige vers la connexion
   useEffect(() => {
@@ -135,6 +171,9 @@ export default function CreatePage() {
     );
   }
 
+  const inputClass =
+    "w-full min-h-12 rounded-xl bg-ink-2 border border-line px-4 text-base placeholder:text-cream-dim/50 focus:border-acid transition-colors";
+
   return (
     <>
       <Navbar />
@@ -152,6 +191,10 @@ export default function CreatePage() {
               >
                 Composons votre pub
               </h1>
+              <p className="mt-3 text-cream-dim max-w-lg">
+                Jingle et vidéo réunis en une seule pub. Décrivez votre projet,
+                recevez un devis personnalisé par email.
+              </p>
               {genError && (
                 <p
                   className="mt-4 text-sm text-ember rounded-xl border border-ember/30 bg-ember/5 px-4 py-3"
@@ -197,10 +240,10 @@ export default function CreatePage() {
                         id="company"
                         type="text"
                         autoComplete="organization"
-                        value={brief.company}
+                        value={form.company}
                         onChange={(e) => set("company", e.target.value)}
                         placeholder="Ex : Boulangerie Martin"
-                        className="w-full min-h-12 rounded-xl bg-ink-2 border border-line px-4 text-base placeholder:text-cream-dim/50 focus:border-acid transition-colors"
+                        className={inputClass}
                         aria-invalid={!!errors.company}
                         aria-describedby={errors.company ? "company-error" : undefined}
                       />
@@ -218,10 +261,10 @@ export default function CreatePage() {
                       <input
                         id="sector"
                         type="text"
-                        value={brief.sector}
+                        value={form.sector}
                         onChange={(e) => set("sector", e.target.value)}
                         placeholder="Ex : boulangerie artisanale"
-                        className="w-full min-h-12 rounded-xl bg-ink-2 border border-line px-4 text-base placeholder:text-cream-dim/50 focus:border-acid transition-colors"
+                        className={inputClass}
                       />
                     </div>
 
@@ -232,10 +275,10 @@ export default function CreatePage() {
                       <textarea
                         id="message"
                         rows={3}
-                        value={brief.message}
+                        value={form.message}
                         onChange={(e) => set("message", e.target.value)}
                         placeholder="Ex : le meilleur pain frais du quartier, ouvert 7j/7"
-                        className="w-full rounded-xl bg-ink-2 border border-line px-4 py-3 text-base placeholder:text-cream-dim/50 focus:border-acid transition-colors resize-none"
+                        className={`${inputClass} py-3 resize-none`}
                         aria-invalid={!!errors.message}
                         aria-describedby={errors.message ? "message-error" : undefined}
                       />
@@ -256,7 +299,7 @@ export default function CreatePage() {
                     </legend>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {MUSIC_STYLES.map((style) => {
-                        const active = brief.styleId === style.id;
+                        const active = form.styleId === style.id;
                         return (
                           <button
                             key={style.id}
@@ -295,7 +338,7 @@ export default function CreatePage() {
                   </motion.fieldset>
                 )}
 
-                {/* Étape 2 — Ambiance + voix */}
+                {/* Étape 2 — Ambiance + durée */}
                 {step === 2 && (
                   <motion.div key="s2" {...slide} className="mt-10 space-y-8">
                     <fieldset>
@@ -304,7 +347,7 @@ export default function CreatePage() {
                       </legend>
                       <div className="flex flex-wrap gap-2">
                         {MOODS.map((mood) => {
-                          const active = brief.mood === mood;
+                          const active = form.mood === mood;
                           return (
                             <button
                               key={mood}
@@ -331,40 +374,10 @@ export default function CreatePage() {
                     </fieldset>
 
                     <fieldset>
-                      <legend className="text-sm font-medium mb-4">Voix</legend>
-                      <div className="grid grid-cols-2 gap-3">
-                        {VOICE_OPTIONS.map((v) => {
-                          const active = brief.voice === v.id;
-                          return (
-                            <button
-                              key={v.id}
-                              type="button"
-                              onClick={() => set("voice", v.id)}
-                              aria-pressed={active}
-                              className={`min-h-12 rounded-xl border text-sm transition-colors cursor-pointer ${
-                                active
-                                  ? "border-acid bg-acid/5 text-cream"
-                                  : "border-line bg-ink-2 text-cream-dim hover:border-cream-dim"
-                              }`}
-                              style={{ touchAction: "manipulation" }}
-                            >
-                              {v.label}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </fieldset>
-                  </motion.div>
-                )}
-
-                {/* Étape 3 — Durée + récap */}
-                {step === 3 && (
-                  <motion.div key="s3" {...slide} className="mt-10 space-y-8">
-                    <fieldset>
-                      <legend className="text-sm font-medium mb-4">Durée</legend>
+                      <legend className="text-sm font-medium mb-4">Durée souhaitée</legend>
                       <div className="grid grid-cols-3 gap-3">
                         {DURATIONS.map((d) => {
-                          const active = brief.duration === d.value;
+                          const active = form.duration === d.value;
                           return (
                             <button
                               key={d.value}
@@ -390,6 +403,103 @@ export default function CreatePage() {
                         })}
                       </div>
                     </fieldset>
+                  </motion.div>
+                )}
+
+                {/* Étape 3 — Projet vidéo + contact */}
+                {step === 3 && (
+                  <motion.div key="s3" {...slide} className="mt-10 space-y-8">
+                    <div className="grid sm:grid-cols-2 gap-6">
+                      <div>
+                        <label htmlFor="budget" className="block text-sm font-medium mb-2">
+                          Budget
+                        </label>
+                        <select
+                          id="budget"
+                          value={form.budget}
+                          onChange={(e) => set("budget", e.target.value)}
+                          className={`${inputClass} cursor-pointer`}
+                        >
+                          {BUDGET_RANGES.map((b) => (
+                            <option key={b} value={b}>{b}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label htmlFor="deadline" className="block text-sm font-medium mb-2">
+                          Délai souhaité
+                        </label>
+                        <select
+                          id="deadline"
+                          value={form.deadline}
+                          onChange={(e) => set("deadline", e.target.value)}
+                          className={`${inputClass} cursor-pointer`}
+                        >
+                          {DEADLINES.map((d) => (
+                            <option key={d} value={d}>{d}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-line pt-6 grid sm:grid-cols-3 gap-6">
+                      <div>
+                        <label htmlFor="name" className="block text-sm font-medium mb-2">
+                          Votre nom <span className="text-ember" aria-hidden="true">*</span>
+                        </label>
+                        <input
+                          id="name"
+                          type="text"
+                          autoComplete="name"
+                          value={form.name}
+                          onChange={(e) => set("name", e.target.value)}
+                          className={inputClass}
+                          placeholder="Camille Martin"
+                          aria-invalid={!!errors.name}
+                          aria-describedby={errors.name ? "err-name" : undefined}
+                        />
+                        {errors.name && (
+                          <p id="err-name" className="mt-2 text-sm text-ember" role="alert">
+                            {errors.name}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <label htmlFor="email" className="block text-sm font-medium mb-2">
+                          Email <span className="text-ember" aria-hidden="true">*</span>
+                        </label>
+                        <input
+                          id="email"
+                          type="email"
+                          autoComplete="email"
+                          value={form.email}
+                          onChange={(e) => set("email", e.target.value)}
+                          className={inputClass}
+                          placeholder="vous@entreprise.fr"
+                          aria-invalid={!!errors.email}
+                          aria-describedby={errors.email ? "err-email" : undefined}
+                        />
+                        {errors.email && (
+                          <p id="err-email" className="mt-2 text-sm text-ember" role="alert">
+                            {errors.email}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <label htmlFor="phone" className="block text-sm font-medium mb-2">
+                          Téléphone
+                        </label>
+                        <input
+                          id="phone"
+                          type="tel"
+                          autoComplete="tel"
+                          value={form.phone}
+                          onChange={(e) => set("phone", e.target.value)}
+                          className={inputClass}
+                          placeholder="06 12 34 56 78"
+                        />
+                      </div>
+                    </div>
 
                     {/* Récapitulatif */}
                     <div className="rounded-2xl border border-line bg-ink-2 p-6">
@@ -399,7 +509,7 @@ export default function CreatePage() {
                       <dl className="space-y-2 text-sm">
                         <div className="flex justify-between gap-4">
                           <dt className="text-cream-dim">Entreprise</dt>
-                          <dd className="text-right">{brief.company}</dd>
+                          <dd className="text-right">{form.company}</dd>
                         </div>
                         <div className="flex justify-between gap-4">
                           <dt className="text-cream-dim">Style</dt>
@@ -407,17 +517,15 @@ export default function CreatePage() {
                         </div>
                         <div className="flex justify-between gap-4">
                           <dt className="text-cream-dim">Ambiance</dt>
-                          <dd className="text-right">{brief.mood}</dd>
-                        </div>
-                        <div className="flex justify-between gap-4">
-                          <dt className="text-cream-dim">Voix</dt>
-                          <dd className="text-right">
-                            {VOICE_OPTIONS.find((v) => v.id === brief.voice)?.label}
-                          </dd>
+                          <dd className="text-right">{form.mood}</dd>
                         </div>
                         <div className="flex justify-between gap-4">
                           <dt className="text-cream-dim">Durée</dt>
-                          <dd className="text-right tabular-nums">{brief.duration} s</dd>
+                          <dd className="text-right tabular-nums">{form.duration} s</dd>
+                        </div>
+                        <div className="flex justify-between gap-4">
+                          <dt className="text-cream-dim">Budget</dt>
+                          <dd className="text-right">{form.budget}</dd>
                         </div>
                       </dl>
                     </div>
@@ -442,7 +550,7 @@ export default function CreatePage() {
                   className="flex items-center gap-2 min-h-12 px-7 rounded-full bg-acid text-ink font-semibold hover:bg-cream transition-colors cursor-pointer"
                   style={{ touchAction: "manipulation" }}
                 >
-                  {step === STEPS.length - 1 ? "Générer ma pub" : "Continuer"}
+                  {step === STEPS.length - 1 ? "Recevoir mon devis" : "Continuer"}
                   <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </button>
               </div>
@@ -468,116 +576,108 @@ export default function CreatePage() {
                 ))}
               </div>
               <h1 className="font-display text-2xl sm:text-4xl" style={{ fontWeight: 700 }}>
-                Composition en cours…
+                Préparation de votre devis…
               </h1>
               <p className="mt-4 text-cream-dim max-w-sm">
-                L&apos;IA écrit les paroles et compose la musique de{" "}
-                <span className="text-cream">{brief.company}</span> en style{" "}
-                <span className="text-cream">{selectedStyle?.name.toLowerCase()}</span>.
+                On assemble le concept de la pub de{" "}
+                <span className="text-cream">{form.company}</span>.
               </p>
-              <p className="mt-6 font-mono text-xs text-cream-dim">
-                Généralement 1 à 2 minutes — ne fermez pas la page
-              </p>
-              <Loader2 className="w-5 h-5 mt-4 animate-spin text-cream-dim" aria-hidden="true" />
+              <Loader2 className="w-5 h-5 mt-6 animate-spin text-cream-dim" aria-hidden="true" />
             </motion.div>
           )}
 
           {/* ————— PHASE RÉSULTAT ————— */}
-          {phase === "result" && ad && (
+          {phase === "result" && quote && (
             <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}>
               <p className="font-mono text-xs text-acid tracking-[0.25em] uppercase">
-                Votre pub est prête
+                Votre devis
               </p>
               <h1
                 className="font-display text-3xl sm:text-5xl tracking-tight mt-3"
                 style={{ fontWeight: 800 }}
               >
-                {ad.brief.company}
+                {form.company}
               </h1>
-              <p className="mt-2 text-cream-dim">
-                {selectedStyle?.name} · {ad.brief.mood} · {ad.brief.duration} s
+
+              {emailSent ? (
+                <p className="mt-4 flex items-center gap-2 text-sm text-acid">
+                  <Mail className="w-4 h-4" aria-hidden="true" />
+                  Une copie vient de vous être envoyée à {form.email}
+                </p>
+              ) : (
+                <p className="mt-4 text-sm text-cream-dim">
+                  Voici votre devis. Nous revenons vers vous très vite par email.
+                </p>
+              )}
+
+              <div className="mt-8 space-y-6 rounded-2xl border border-line bg-ink-2 p-6 sm:p-8">
+                <p className="text-lg">{quote.intro}</p>
+
+                <div>
+                  <h2 className="font-mono text-xs tracking-widest uppercase text-cream-dim mb-2">
+                    Le concept
+                  </h2>
+                  <p className="text-cream-dim leading-relaxed">{quote.concept}</p>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-6">
+                  <div>
+                    <h2 className="font-mono text-xs tracking-widest uppercase text-cream-dim mb-2">
+                      Formule recommandée
+                    </h2>
+                    <p className="font-display text-2xl" style={{ fontWeight: 700 }}>
+                      {quote.recommendedTier}
+                    </p>
+                    <p className="text-acid font-semibold">{quote.priceRange}</p>
+                  </div>
+                  <div>
+                    <h2 className="font-mono text-xs tracking-widest uppercase text-cream-dim mb-2">
+                      Délai
+                    </h2>
+                    <p className="text-cream-dim">{quote.timeline}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <h2 className="font-mono text-xs tracking-widest uppercase text-cream-dim mb-3">
+                    Les étapes
+                  </h2>
+                  <ol className="space-y-2">
+                    {quote.steps.map((s, i) => (
+                      <li key={i} className="flex items-start gap-3 text-cream-dim">
+                        <span className="shrink-0 w-6 h-6 rounded-full bg-acid/15 text-acid text-sm flex items-center justify-center font-mono">
+                          {i + 1}
+                        </span>
+                        {s}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
+
+              <p className="mt-6 flex items-center gap-2 text-sm text-cream-dim">
+                <Check className="w-4 h-4 text-acid" aria-hidden="true" />
+                Ce devis est une première estimation, sans engagement.
               </p>
-              {user && saved && (
-                <p className="mt-2 text-sm text-acid">
-                  Sauvegardée dans{" "}
-                  <Link href="/dashboard" className="underline hover:text-cream">
-                    Mes pubs
-                  </Link>
-                </p>
-              )}
-              {!user && (
-                <p className="mt-2 text-sm text-cream-dim">
-                  <Link href="/login?next=/create" className="text-acid underline hover:text-cream">
-                    Connectez-vous
-                  </Link>{" "}
-                  pour sauvegarder vos pubs et les retrouver plus tard.
-                </p>
-              )}
-
-              <div className="mt-8 rounded-2xl border border-line bg-ink-2 p-6">
-                <WaveformPlayer
-                  duration={ad.brief.duration}
-                  audioUrl={ad.audioUrl}
-                  accent={selectedStyle?.hue}
-                />
-                {!ad.audioUrl && (
-                  <p className="mt-4 text-xs text-cream-dim font-mono">
-                    Mode démo — l&apos;audio réel sera disponible une fois l&apos;API de
-                    génération branchée.
-                  </p>
-                )}
-              </div>
-
-              <div className="mt-6 rounded-2xl border border-line bg-ink-2 p-6">
-                <h2 className="font-mono text-xs tracking-widest uppercase text-cream-dim mb-4">
-                  Paroles générées
-                </h2>
-                <pre className="whitespace-pre-wrap font-body text-base leading-relaxed">
-                  {ad.lyrics}
-                </pre>
-              </div>
 
               <div className="mt-8 flex flex-wrap gap-4">
+                <Link
+                  href="/dashboard"
+                  className="flex items-center gap-2 min-h-12 px-6 rounded-full bg-acid text-ink font-semibold hover:bg-cream transition-colors"
+                >
+                  Voir mes devis
+                </Link>
                 <button
                   type="button"
-                  onClick={launch}
-                  className="flex items-center gap-2 min-h-12 px-6 rounded-full border border-line text-cream hover:border-cream-dim transition-colors cursor-pointer"
-                >
-                  <RefreshCw className="w-4 h-4" aria-hidden="true" />
-                  Régénérer
-                </button>
-                {ad.audioUrl ? (
-                  <a
-                    href={ad.audioUrl}
-                    download={`pub-${ad.brief.company.toLowerCase().replace(/\s+/g, "-")}.mp3`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 min-h-12 px-6 rounded-full bg-acid text-ink font-semibold hover:bg-cream transition-colors"
-                  >
-                    <Download className="w-4 h-4" aria-hidden="true" />
-                    Télécharger
-                  </a>
-                ) : (
-                  <button
-                    type="button"
-                    disabled
-                    className="flex items-center gap-2 min-h-12 px-6 rounded-full bg-acid/30 text-ink/60 font-semibold cursor-not-allowed"
-                  >
-                    <Download className="w-4 h-4" aria-hidden="true" />
-                    Télécharger
-                  </button>
-                )}
-                <Link
-                  href="/create"
                   onClick={() => {
                     setPhase("brief");
                     setStep(0);
-                    setAd(null);
+                    setQuote(null);
                   }}
-                  className="flex items-center min-h-12 px-6 rounded-full text-cream-dim hover:text-cream transition-colors"
+                  className="flex items-center min-h-12 px-6 rounded-full text-cream-dim hover:text-cream transition-colors cursor-pointer"
                 >
-                  Nouvelle pub
-                </Link>
+                  Nouveau projet
+                </button>
               </div>
             </motion.div>
           )}
