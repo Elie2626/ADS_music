@@ -1,5 +1,5 @@
 /*
- * Grille tarifaire des pubs vidéo ONDE.
+ * Tarif unique des pubs ONDE (jingle + vidéo).
  * Sert à la fois d'affichage sur le site et de cadre pour le devis
  * généré par l'IA (pour qu'il reste cohérent et à ton image).
  */
@@ -12,59 +12,23 @@ export type VideoTier = {
   duration: string;
   ideal: string;
   features: string[];
-  featured?: boolean;
 };
 
-export const VIDEO_TIERS: VideoTier[] = [
-  {
-    id: "essentielle",
-    name: "Essentielle",
-    price: "490 €",
-    priceValue: 490,
-    duration: "15 s",
-    ideal: "Réseaux sociaux, un format vertical",
-    features: [
-      "Jingle ONDE sur mesure inclus",
-      "Montage animé (logo + vos visuels)",
-      "Format vertical 9:16",
-      "1 révision incluse",
-      "Livraison en 5 jours",
-    ],
-  },
-  {
-    id: "signature",
-    name: "Signature",
-    price: "990 €",
-    priceValue: 990,
-    duration: "30 s",
-    ideal: "Le format pub le plus polyvalent",
-    features: [
-      "Jingle ONDE sur mesure inclus",
-      "Concept créatif + storyboard",
-      "Plans vidéo générés par IA",
-      "3 formats (vertical, carré, paysage)",
-      "3 révisions incluses",
-      "Livraison en 7 jours",
-    ],
-    featured: true,
-  },
-  {
-    id: "premium",
-    name: "Premium",
-    price: "1 990 €",
-    priceValue: 1990,
-    duration: "jusqu'à 60 s",
-    ideal: "Campagne complète, haut de gamme",
-    features: [
-      "Jingle ONDE sur mesure inclus",
-      "Direction artistique dédiée",
-      "Production vidéo sur mesure",
-      "Déclinaisons multi-formats illimitées",
-      "Révisions illimitées",
-      "Accompagnement diffusion",
-    ],
-  },
-];
+export const PUB_OFFER: VideoTier = {
+  id: "pub-complete",
+  name: "Pub complète",
+  price: "99 €",
+  priceValue: 99,
+  duration: "jusqu'à 30 s",
+  ideal: "Jingle et vidéo réunis, prêts à diffuser",
+  features: [
+    "Jingle ONDE sur mesure",
+    "Montage vidéo animé (logo + visuels)",
+    "Formats vertical, carré et paysage",
+    "1 révision incluse",
+    "Livraison en 5 jours",
+  ],
+};
 
 export const BUDGET_RANGES = [
   "Moins de 500 €",
@@ -83,7 +47,4 @@ export const DEADLINES = [
 ] as const;
 
 // Résumé injecté dans le prompt du générateur de devis
-export const PRICING_CONTEXT = VIDEO_TIERS.map(
-  (t) =>
-    `- ${t.name} (${t.price}, ${t.duration}) : ${t.ideal}. Inclut : ${t.features.join(", ")}.`
-).join("\n");
+export const PRICING_CONTEXT = `- ${PUB_OFFER.name} (${PUB_OFFER.price}, ${PUB_OFFER.duration}) : ${PUB_OFFER.ideal}. Inclut : ${PUB_OFFER.features.join(", ")}.`;

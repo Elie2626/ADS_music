@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -16,9 +15,8 @@ import {
   Music4,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
-import { useAuth } from "@/components/AuthProvider";
 import { saveDevis } from "@/lib/devis";
-import { BUDGET_RANGES, DEADLINES, VIDEO_TIERS } from "@/lib/pricing";
+import { BUDGET_RANGES, DEADLINES } from "@/lib/pricing";
 import { DURATIONS, MOODS, MUSIC_STYLES } from "@/lib/styles";
 import type { DevisRequest, GeneratedQuote } from "@/app/api/devis/route";
 
@@ -45,8 +43,6 @@ type FormState = DevisRequest & {
 };
 
 export default function CreatePage() {
-  const { user, loading } = useAuth();
-  const router = useRouter();
   const [phase, setPhase] = useState<Phase>("brief");
   const [genError, setGenError] = useState("");
   const [step, setStep] = useState(0);
@@ -75,12 +71,6 @@ export default function CreatePage() {
   };
 
   const selectedStyle = MUSIC_STYLES.find((s) => s.id === form.styleId);
-
-  useEffect(() => {
-    if (user?.email && !form.email) set("email", user.email);
-    if (user?.displayName && !form.name) set("name", user.displayName);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
 
   const validateStep = (): boolean => {
     const e: Record<string, string> = {};
@@ -137,7 +127,7 @@ export default function CreatePage() {
       setEmailSent(data.emailSent);
       setPhase("result");
       try {
-        await saveDevis(payload, data.quote, user?.uid ?? null);
+        await saveDevis(payload, data.quote, null);
       } catch {
         // le devis reste affiché même si l'enregistrement échoue
       }
@@ -148,28 +138,6 @@ export default function CreatePage() {
       setPhase("brief");
     }
   };
-
-  // Création réservée aux comptes : on redirige vers la connexion
-  useEffect(() => {
-    if (!loading && !user) router.replace("/login?next=/create");
-  }, [loading, user, router]);
-
-  if (loading || !user) {
-    return (
-      <>
-        <Navbar />
-        <main
-          id="contenu"
-          className="flex-1 pt-24 flex items-center justify-center min-h-[60vh]"
-        >
-          <Loader2
-            className="w-6 h-6 animate-spin text-cream-dim"
-            aria-label="Chargement"
-          />
-        </main>
-      </>
-    );
-  }
 
   const inputClass =
     "w-full min-h-12 rounded-xl bg-ink-2 border border-line px-4 text-base placeholder:text-cream-dim/50 focus:border-acid transition-colors";
@@ -662,10 +630,10 @@ export default function CreatePage() {
 
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link
-                  href="/dashboard"
-                  className="flex items-center gap-2 min-h-12 px-6 rounded-full bg-acid text-ink font-semibold hover:bg-cream transition-colors"
+                  href="/"
+                  className="flex items-center min-h-12 px-6 rounded-full bg-acid text-ink font-semibold hover:bg-cream transition-colors"
                 >
-                  Voir mes devis
+                  Retour à l&apos;accueil
                 </Link>
                 <button
                   type="button"

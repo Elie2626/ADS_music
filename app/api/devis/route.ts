@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PRICING_CONTEXT, VIDEO_TIERS } from "@/lib/pricing";
+import { PRICING_CONTEXT, PUB_OFFER } from "@/lib/pricing";
 
 export type DevisRequest = {
   company: string;
@@ -24,12 +24,11 @@ export type GeneratedQuote = {
 
 /* Devis de secours (tant que la clé Claude n'est pas branchée) */
 function fallbackQuote(req: DevisRequest): GeneratedQuote {
-  const tier = VIDEO_TIERS[1];
   return {
-    intro: `Merci ${req.name} pour votre demande concernant ${req.company}. Voici une première proposition pour votre pub vidéo.`,
+    intro: `Merci ${req.name} pour votre demande concernant ${req.company}. Voici votre proposition pour votre pub.`,
     concept: `Une pub ${req.style.toLowerCase()} mettant en avant « ${req.message} », pensée pour le secteur ${req.sector || "de votre activité"}, avec un jingle ONDE sur mesure et un montage rythmé à votre image.`,
-    recommendedTier: tier.name,
-    priceRange: tier.price,
+    recommendedTier: PUB_OFFER.name,
+    priceRange: PUB_OFFER.price,
     timeline: "Livraison estimée sous 7 jours après validation du concept.",
     steps: [
       "Échange de cadrage (15 min) pour affiner le message et le ton",
@@ -46,7 +45,7 @@ async function generateQuote(req: DevisRequest): Promise<GeneratedQuote> {
 
   const prompt = `Tu es un chargé de projet chez ONDE, un studio qui crée des pubs musicales et vidéo pour les entreprises. Rédige un devis personnalisé, chaleureux et professionnel, en français.
 
-Grille tarifaire ONDE (à respecter) :
+Offre ONDE (tarif unique, à respecter) :
 ${PRICING_CONTEXT}
 
 Demande du client :
@@ -62,8 +61,8 @@ Réponds UNIQUEMENT avec un objet JSON valide (sans texte autour) de la forme :
 {
   "intro": "phrase d'accueil personnalisée",
   "concept": "2-3 phrases décrivant un concept de pub vidéo adapté à ce client",
-  "recommendedTier": "nom d'une formule de la grille",
-  "priceRange": "fourchette de prix cohérente avec la grille et le budget",
+  "recommendedTier": "${PUB_OFFER.name}",
+  "priceRange": "${PUB_OFFER.price}",
   "timeline": "délai réaliste tenant compte du besoin",
   "steps": ["étape 1", "étape 2", "étape 3", "étape 4"]
 }`;

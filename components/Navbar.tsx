@@ -3,22 +3,17 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AudioWaveform, LogOut, Menu, X } from "lucide-react";
-import { signOut } from "firebase/auth";
-import { auth } from "@/lib/firebase";
-import { useAuth } from "@/components/AuthProvider";
+import { AudioWaveform, Menu, X } from "lucide-react";
 
 const NAV_LINKS = [
   { href: "/#styles", label: "Styles" },
   { href: "/#process", label: "Comment ça marche" },
   { href: "/#pricing", label: "Tarifs" },
-  { href: "/audio", label: "Jingle seul" },
 ] as const;
 
 export default function Navbar() {
   const pathname = usePathname();
-  const isCreate = pathname?.startsWith("/create") || pathname?.startsWith("/audio");
-  const { user, loading } = useAuth();
+  const isCreate = pathname?.startsWith("/create");
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -50,33 +45,6 @@ export default function Navbar() {
               {l.label}
             </Link>
           ))}
-          {!loading &&
-            (user ? (
-              <>
-                <Link
-                  href="/dashboard"
-                  className="flex items-center min-h-11 px-4 rounded-md text-sm text-cream-dim hover:text-cream transition-colors"
-                >
-                  Mes devis
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => signOut(auth)}
-                  aria-label="Se déconnecter"
-                  title="Se déconnecter"
-                  className="flex items-center justify-center min-h-11 min-w-11 rounded-md text-cream-dim hover:text-cream transition-colors cursor-pointer"
-                >
-                  <LogOut className="w-4 h-4" aria-hidden="true" />
-                </button>
-              </>
-            ) : (
-              <Link
-                href="/login"
-                className="flex items-center min-h-11 px-4 rounded-md text-sm text-cream-dim hover:text-cream transition-colors"
-              >
-                Connexion
-              </Link>
-            ))}
           {!isCreate && (
             <Link
               href="/create"
@@ -121,37 +89,6 @@ export default function Navbar() {
               {l.label}
             </Link>
           ))}
-          {!loading &&
-            (user ? (
-              <>
-                <Link
-                  href="/dashboard"
-                  onClick={() => setMenuOpen(false)}
-                  className="flex items-center min-h-12 px-3 rounded-md text-base text-cream-dim hover:text-cream hover:bg-ink-2 transition-colors"
-                >
-                  Mes devis
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => {
-                    signOut(auth);
-                    setMenuOpen(false);
-                  }}
-                  className="flex items-center gap-2 min-h-12 px-3 rounded-md text-base text-cream-dim hover:text-cream hover:bg-ink-2 transition-colors cursor-pointer"
-                >
-                  <LogOut className="w-4 h-4" aria-hidden="true" />
-                  Se déconnecter
-                </button>
-              </>
-            ) : (
-              <Link
-                href="/login"
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center min-h-12 px-3 rounded-md text-base text-cream-dim hover:text-cream hover:bg-ink-2 transition-colors"
-              >
-                Connexion
-              </Link>
-            ))}
           {!isCreate && (
             <Link
               href="/create"
