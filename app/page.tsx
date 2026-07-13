@@ -136,16 +136,19 @@ export default function Home() {
           <div className="mt-16 grid sm:grid-cols-3 gap-6">
             {[
               {
-                num: "+30 %",
-                text: "Une seule écoute d'un jingle suffit à améliorer la mémorisation de la marque de plus de 30 %.",
+                num: "30%/95%",
+                audio: "Une seule écoute d'un jingle suffit à améliorer la mémorisation de la marque de plus de 30 %.",
+                video: "Les spectateurs retiennent 95 % d'un message vu en vidéo, contre 10 % seulement à l'écrit.",
               },
               {
-                num: "+46 %",
-                text: "La musique utilisée efficacement en branding augmente la préférence de marque de 46 %.",
+                num: "46%/64%",
+                audio: "La musique utilisée efficacement en branding augmente la préférence de marque de 46 %.",
+                video: "64 % des consommateurs achètent après avoir vu une vidéo publicitaire de la marque.",
               },
               {
-                num: "80 %",
-                text: "Un jingle bien conçu peut faire grimper le taux de mémorisation d'une pub jusqu'à 80 %.",
+                num: "80%/84%",
+                audio: "Un jingle bien conçu peut faire grimper le taux de mémorisation d'une pub jusqu'à 80 %.",
+                video: "84 % des gens disent avoir été convaincus d'acheter après avoir regardé une vidéo de marque.",
               },
             ].map((stat, i) => (
               <motion.figure
@@ -155,8 +158,19 @@ export default function Home() {
                 className="stat-card rounded-2xl border border-line bg-ink-2 p-8 hover:border-acid/40 transition-colors"
               >
                 <StatNumber3D label={stat.num} />
-                <figcaption className="mt-4 text-sm text-cream-dim leading-relaxed">
-                  {stat.text}
+                <figcaption className="mt-4 space-y-3 text-sm text-cream-dim leading-relaxed">
+                  <p>
+                    <span className="font-mono text-[10px] tracking-widest uppercase text-acid">
+                      Audio
+                    </span>{" "}
+                    — {stat.audio}
+                  </p>
+                  <p>
+                    <span className="font-mono text-[10px] tracking-widest uppercase text-acid">
+                      Vidéo
+                    </span>{" "}
+                    — {stat.video}
+                  </p>
                 </figcaption>
               </motion.figure>
             ))}
