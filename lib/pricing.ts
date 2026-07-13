@@ -1,5 +1,5 @@
 /*
- * Grille tarifaire des pubs ONDE (jingle + vidéo), par durée.
+ * Grille tarifaire des pubs WAVORE (jingle + vidéo), par durée.
  * Sert à la fois d'affichage sur le site et de cadre pour le devis
  * généré par l'IA (pour qu'il reste cohérent et à ton image).
  */
@@ -26,7 +26,7 @@ export const VIDEO_TIERS: VideoTier[] = [
     duration: "15 s",
     ideal: "Réseaux sociaux, un format vertical",
     features: [
-      "Jingle ONDE sur mesure",
+      "Jingle WAVORE sur mesure",
       "Montage vidéo animé (logo + visuels)",
       "Format vertical 9:16",
       "Pas satisfait ? 1 changement disponible",
@@ -42,7 +42,7 @@ export const VIDEO_TIERS: VideoTier[] = [
     duration: "30 s",
     ideal: "Le format le plus polyvalent",
     features: [
-      "Jingle ONDE sur mesure",
+      "Jingle WAVORE sur mesure",
       "Montage vidéo animé (logo + visuels)",
       "Formats vertical, carré et paysage",
       "Pas satisfait ? 2 changements disponibles",
@@ -59,7 +59,7 @@ export const VIDEO_TIERS: VideoTier[] = [
     duration: "1 min",
     ideal: "Campagne complète, tous supports",
     features: [
-      "Jingle ONDE sur mesure",
+      "Jingle WAVORE sur mesure",
       "Montage vidéo animé (logo + visuels)",
       "Tous formats (vertical, carré, paysage)",
       "Pas satisfait ? 3 changements disponibles",

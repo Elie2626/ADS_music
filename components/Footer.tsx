@@ -15,7 +15,7 @@ export default function Footer() {
             aria-hidden="true"
           />
           <span className="font-display text-lg" style={{ fontWeight: 800 }}>
-            ONDE<span className="text-acid">.</span>
+            WAVORE<span className="text-acid">.</span>
           </span>
         </div>
         <p className="text-sm text-cream-dim max-w-md">
@@ -32,7 +32,7 @@ export default function Footer() {
         </nav>
       </div>
       <div className="text-center text-xs text-cream-dim/60 pb-6 font-mono">
-        © {new Date().getFullYear()} ONDE — tous droits réservés
+        © {new Date().getFullYear()} WAVORE — tous droits réservés
       </div>
     </footer>
   );

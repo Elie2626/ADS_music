@@ -26,7 +26,7 @@ export default function Navbar() {
         <Link
           href="/"
           className="flex items-center gap-2 min-h-11 px-2 -ml-2 rounded-md"
-          aria-label="ONDE — retour à l'accueil"
+          aria-label="WAVORE — retour à l'accueil"
           onClick={() => setMenuOpen(false)}
         >
           <Image
@@ -39,7 +39,7 @@ export default function Navbar() {
             priority
           />
           <span className="font-display font-800 text-xl tracking-tight" style={{ fontWeight: 800 }}>
-            ONDE<span className="text-acid">.</span>
+            WAVORE<span className="text-acid">.</span>
           </span>
         </Link>
 

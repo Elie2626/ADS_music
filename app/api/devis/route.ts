@@ -38,7 +38,7 @@ function fallbackQuote(req: DevisRequest): GeneratedQuote {
   const tier = tierForDuration(req.duration);
   return {
     intro: `Merci ${req.name} pour votre demande concernant ${req.company}. Voici votre proposition pour votre pub.`,
-    concept: `Une pub ${req.style.toLowerCase()} mettant en avant « ${req.message} », pensée pour le secteur ${req.sector || "de votre activité"}, avec un jingle ONDE sur mesure et un montage rythmé à votre image.`,
+    concept: `Une pub ${req.style.toLowerCase()} mettant en avant « ${req.message} », pensée pour le secteur ${req.sector || "de votre activité"}, avec un jingle WAVORE sur mesure et un montage rythmé à votre image.`,
     recommendedTier: tier.name,
     priceRange: tier.price,
     timeline: "Livraison estimée sous 7 jours après validation du concept.",
@@ -57,9 +57,9 @@ async function generateQuote(req: DevisRequest): Promise<GeneratedQuote> {
 
   const tier = tierForDuration(req.duration);
 
-  const prompt = `Tu es un chargé de projet chez ONDE, un studio qui crée des pubs musicales et vidéo pour les entreprises. Rédige un devis personnalisé, chaleureux et professionnel, en français.
+  const prompt = `Tu es un chargé de projet chez WAVORE, un studio qui crée des pubs musicales et vidéo pour les entreprises. Rédige un devis personnalisé, chaleureux et professionnel, en français.
 
-Grille tarifaire ONDE (à respecter strictement, ne jamais inventer un autre prix) :
+Grille tarifaire WAVORE (à respecter strictement, ne jamais inventer un autre prix) :
 ${PRICING_CONTEXT}
 
 Demande du client :
@@ -109,7 +109,7 @@ La durée souhaitée correspond à la formule "${tier.name}" (${tier.price}). R�
 function quoteToHtml(req: DevisRequest, q: GeneratedQuote): string {
   return `
     <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a1a;">
-      <h1 style="color: #6f5ce8;">Votre devis ONDE</h1>
+      <h1 style="color: #6f5ce8;">Votre devis WAVORE</h1>
       <p>${q.intro}</p>
       <h3>Le concept</h3>
       <p>${q.concept}</p>
@@ -120,14 +120,14 @@ function quoteToHtml(req: DevisRequest, q: GeneratedQuote): string {
       <h3>Les étapes</h3>
       <ol>${q.steps.map((s) => `<li>${s}</li>`).join("")}</ol>
       <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
-      <p style="font-size:13px;color:#666;">Ce devis est une première estimation. Nous reviendrons vers vous très vite pour affiner ensemble. — L'équipe ONDE</p>
+      <p style="font-size:13px;color:#666;">Ce devis est une première estimation. Nous reviendrons vers vous très vite pour affiner ensemble. — L'équipe WAVORE</p>
     </div>`;
 }
 
 async function sendEmails(req: DevisRequest, q: GeneratedQuote): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY;
   const owner = process.env.OWNER_EMAIL;
-  const from = process.env.RESEND_FROM ?? "ONDE <onboarding@resend.dev>";
+  const from = process.env.RESEND_FROM ?? "WAVORE <onboarding@resend.dev>";
   if (!apiKey || !owner) return false;
 
   const send = (to: string, subject: string, html: string) =>
@@ -142,7 +142,7 @@ async function sendEmails(req: DevisRequest, q: GeneratedQuote): Promise<boolean
 
   try {
     await Promise.all([
-      send(req.email, `Votre devis ONDE pour ${req.company}`, quoteToHtml(req, q)),
+      send(req.email, `Votre devis WAVORE pour ${req.company}`, quoteToHtml(req, q)),
       send(
         owner,
         `Nouveau lead devis — ${req.company}`,

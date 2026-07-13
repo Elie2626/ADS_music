@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "ONDE — Pubs musicales et vidéo générées par IA",
-    short_name: "ONDE",
+    name: "WAVORE — Pubs musicales et vidéo générées par IA",
+    short_name: "WAVORE",
     description:
       "Créez la pub complète de votre entreprise — jingle et vidéo — en quelques minutes.",
     start_url: "/",

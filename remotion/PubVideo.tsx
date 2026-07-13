@@ -11,7 +11,7 @@ import {
 import { useAudioData, visualizeAudio } from "@remotion/media-utils";
 
 /*
- * Composition "visualizer" ONDE — thème violet néon.
+ * Composition "visualizer" WAVORE — thème violet néon.
  * Fond animé, pochette au centre, waveform réactive au VRAI son du jingle,
  * nom de l'entreprise + accroche. Rendue en 9:16 et 1:1.
  */
@@ -152,7 +152,7 @@ export const PubVideo: React.FC<PubVideoProps> = ({
         </Sequence>
       </AbsoluteFill>
 
-      {/* Watermark ONDE */}
+      {/* Watermark WAVORE */}
       <div
         style={{
           position: "absolute",
@@ -167,7 +167,7 @@ export const PubVideo: React.FC<PubVideoProps> = ({
           opacity: 0.85,
         }}
       >
-        ONDE<span style={{ color: hue }}>.</span>
+        WAVORE<span style={{ color: hue }}>.</span>
       </div>
     </AbsoluteFill>
   );

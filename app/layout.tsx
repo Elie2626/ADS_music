@@ -21,7 +21,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ONDE — Pubs musicales et vidéo générées par IA",
+  title: "WAVORE — Pubs musicales et vidéo générées par IA",
   description:
     "Créez la pub complète de votre entreprise — jingle et vidéo — en quelques minutes. Choisissez le style, l'ambiance, la durée — nous créons, vous diffusez.",
   icons: {

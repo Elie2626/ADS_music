@@ -175,7 +175,7 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Comparatif agence vs ONDE */}
+          {/* Comparatif agence vs WAVORE */}
           <motion.div
             {...fadeUp}
             className="mt-6 rounded-2xl border border-acid/40 bg-ink-3 p-8 sm:p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
@@ -192,7 +192,7 @@ export default function Home() {
                 className="mt-3 font-display text-2xl sm:text-3xl"
                 style={{ fontWeight: 700 }}
               >
-                Chez ONDE, c&apos;est{" "}
+                Chez WAVORE, c&apos;est{" "}
                 <span className="text-acid">jusqu&apos;à 60× moins cher</span> —
                 à partir de {VIDEO_TIERS[0].price}.
               </p>
@@ -226,7 +226,7 @@ export default function Home() {
               </video>
             </div>
             <p className="mt-4 text-sm text-cream-dim">
-              Pub générée par ONDE — jingle et vidéo réunis.
+              Pub générée par WAVORE — jingle et vidéo réunis.
             </p>
           </motion.div>
         </section>
