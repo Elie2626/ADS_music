@@ -21,9 +21,18 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ONDE — Pubs musicales générées par IA",
+  title: "ONDE — Pubs musicales et vidéo générées par IA",
   description:
-    "Créez le jingle publicitaire de votre entreprise en quelques minutes. Choisissez le style, l'ambiance, la durée — l'IA compose, vous diffusez.",
+    "Créez la pub complète de votre entreprise — jingle et vidéo — en quelques minutes. Choisissez le style, l'ambiance, la durée — nous créons, vous diffusez.",
+  icons: {
+    icon: [
+      { url: "/icon.png", type: "image/png" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/apple-icon.png",
+  },
+  manifest: "/manifest.webmanifest",
 };
 
 export default function RootLayout({

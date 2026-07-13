@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { AudioWaveform, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 const NAV_LINKS = [
   { href: "/#styles", label: "Styles" },
@@ -28,7 +29,15 @@ export default function Navbar() {
           aria-label="ONDE — retour à l'accueil"
           onClick={() => setMenuOpen(false)}
         >
-          <AudioWaveform className="w-6 h-6 text-acid" aria-hidden="true" />
+          <Image
+            src="/brand/logo.png"
+            alt=""
+            width={32}
+            height={32}
+            className="w-8 h-8 rounded-lg"
+            aria-hidden="true"
+            priority
+          />
           <span className="font-display font-800 text-xl tracking-tight" style={{ fontWeight: 800 }}>
             ONDE<span className="text-acid">.</span>
           </span>

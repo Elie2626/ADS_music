@@ -1,12 +1,19 @@
 import Link from "next/link";
-import { AudioWaveform } from "lucide-react";
+import Image from "next/image";
 
 export default function Footer() {
   return (
     <footer className="border-t border-line mt-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         <div className="flex items-center gap-2">
-          <AudioWaveform className="w-5 h-5 text-acid" aria-hidden="true" />
+          <Image
+            src="/brand/logo.png"
+            alt=""
+            width={24}
+            height={24}
+            className="w-6 h-6 rounded-md"
+            aria-hidden="true"
+          />
           <span className="font-display text-lg" style={{ fontWeight: 800 }}>
             ONDE<span className="text-acid">.</span>
           </span>
