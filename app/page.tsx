@@ -12,7 +12,6 @@ import {
   Sparkles,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
-import WaveformPlayer from "@/components/WaveformPlayer";
 import Footer from "@/components/Footer";
 import { MUSIC_STYLES } from "@/lib/styles";
 import { VIDEO_TIERS } from "@/lib/pricing";
@@ -68,7 +67,7 @@ export default function Home() {
             >
               Votre marque
               <br />
-              mérite son <span className="text-acid italic">hymne</span>
+              mérite son <span className="text-acid italic">Clip</span>
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 24 }}
@@ -207,33 +206,28 @@ export default function Home() {
             </Link>
           </motion.div>
 
-          {/* Démo audio */}
+          {/* Démo vidéo */}
           <motion.div
             {...fadeUp}
-            className="mt-6 rounded-2xl border border-acid/40 bg-ink-2 p-6 sm:p-8"
+            className="mt-6 rounded-2xl border border-acid/40 bg-ink-2 p-4 sm:p-6"
           >
-            <p className="font-mono text-xs text-acid tracking-[0.25em] uppercase mb-5">
-              Écoutez un exemple
+            <p className="font-mono text-xs text-acid tracking-[0.25em] uppercase mb-4">
+              Regardez un exemple
             </p>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/audio/demo-cover.jpg"
-                alt="Pochette de la pub de démonstration Onde en boucle"
-                width={112}
-                height={112}
-                className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl border border-line shrink-0 object-cover"
-              />
-              <div className="flex-1 w-full min-w-0">
-                <h3 className="font-display text-xl" style={{ fontWeight: 600 }}>
-                  Onde en boucle
-                </h3>
-                <p className="text-sm text-cream-dim mb-4">
-                  Pub générée par ONDE · extrait de 1 min 30
-                </p>
-                <WaveformPlayer duration={90} audioUrl="/audio/demo-onde.mp3" />
-              </div>
+            <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-line bg-ink">
+              <video
+                controls
+                playsInline
+                preload="metadata"
+                poster="/video/app-demo-poster.jpg"
+                className="absolute inset-0 w-full h-full object-cover"
+              >
+                <source src="/video/app-demo.mp4" type="video/mp4" />
+              </video>
             </div>
+            <p className="mt-4 text-sm text-cream-dim">
+              Pub générée par ONDE — jingle et vidéo réunis.
+            </p>
           </motion.div>
         </section>
 
