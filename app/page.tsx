@@ -15,7 +15,7 @@ import Navbar from "@/components/Navbar";
 import WaveformPlayer from "@/components/WaveformPlayer";
 import Footer from "@/components/Footer";
 import { MUSIC_STYLES } from "@/lib/styles";
-import { PUB_OFFER } from "@/lib/pricing";
+import { VIDEO_TIERS } from "@/lib/pricing";
 
 const Scene3D = dynamic(() => import("@/components/Scene3D"), { ssr: false });
 const StatNumber3D = dynamic(() => import("@/components/StatNumber3D"), { ssr: false });
@@ -180,8 +180,8 @@ export default function Home() {
                 style={{ fontWeight: 700 }}
               >
                 Chez ONDE, c&apos;est{" "}
-                <span className="text-acid">jusqu&apos;à 30× moins cher</span> —
-                {PUB_OFFER.price} seulement.
+                <span className="text-acid">jusqu&apos;à 60× moins cher</span> —
+                à partir de {VIDEO_TIERS[0].price}.
               </p>
             </div>
             <Link
@@ -339,51 +339,65 @@ export default function Home() {
             className="font-display text-3xl sm:text-5xl tracking-tight"
             style={{ fontWeight: 700 }}
           >
-            Un tarif simple<span className="text-acid">.</span>
+            Des tarifs simples<span className="text-acid">.</span>
           </motion.h2>
           <motion.p
             {...fadeUp}
             className="mt-4 text-cream-dim max-w-lg"
           >
-            Jingle et vidéo toujours réunis, un seul prix. Décrivez votre projet
-            et recevez un devis personnalisé.
+            Jingle et vidéo toujours réunis. Décrivez votre projet et recevez un
+            devis personnalisé.
           </motion.p>
 
-          <motion.div
-            {...fadeUp}
-            className="mt-10 max-w-md rounded-2xl border border-acid bg-ink-3 p-8 sm:p-10"
-          >
-            <span className="inline-flex items-center gap-1 bg-acid text-ink font-mono text-[10px] tracking-widest uppercase px-3 py-1 rounded-full">
-              <Sparkles className="w-3 h-3" aria-hidden="true" /> Offre unique
-            </span>
-            <h3 className="font-mono text-xs tracking-widest uppercase text-cream-dim mt-6">
-              {PUB_OFFER.name}
-            </h3>
-            <p className="mt-3 flex items-baseline gap-2">
-              <span
-                className="font-display text-6xl tabular-nums"
-                style={{ fontWeight: 800 }}
+          <div className="mt-10 grid sm:grid-cols-3 gap-6 items-stretch">
+            {VIDEO_TIERS.map((plan, i) => (
+              <motion.div
+                key={plan.id}
+                {...fadeUp}
+                transition={{ ...fadeUp.transition, delay: i * 0.1 }}
+                className={`relative rounded-2xl border p-8 flex flex-col ${
+                  plan.featured ? "border-acid bg-ink-3" : "border-line bg-ink-2"
+                }`}
               >
-                {PUB_OFFER.price}
-              </span>
-              <span className="text-sm text-cream-dim">{PUB_OFFER.duration}</span>
-            </p>
-            <p className="mt-2 text-sm text-cream-dim">{PUB_OFFER.ideal}</p>
-            <ul className="mt-6 space-y-3">
-              {PUB_OFFER.features.map((f) => (
-                <li key={f} className="flex items-start gap-2 text-sm text-cream-dim">
-                  <Check className="w-4 h-4 mt-0.5 text-acid shrink-0" aria-hidden="true" />
-                  {f}
-                </li>
-              ))}
-            </ul>
-            <Link
-              href="/create"
-              className="mt-8 flex items-center justify-center min-h-12 rounded-full bg-acid text-ink font-semibold hover:bg-cream transition-colors"
-            >
-              Demander un devis
-            </Link>
-          </motion.div>
+                {plan.featured && (
+                  <span className="absolute -top-3 left-8 flex items-center gap-1 bg-acid text-ink font-mono text-[10px] tracking-widest uppercase px-3 py-1 rounded-full">
+                    <Sparkles className="w-3 h-3" aria-hidden="true" /> Populaire
+                  </span>
+                )}
+                <h3 className="font-mono text-xs tracking-widest uppercase text-cream-dim">
+                  {plan.name}
+                </h3>
+                <p className="mt-4 flex items-baseline gap-2">
+                  <span
+                    className="font-display text-5xl tabular-nums"
+                    style={{ fontWeight: 800 }}
+                  >
+                    {plan.price}
+                  </span>
+                  <span className="text-sm text-cream-dim">{plan.duration}</span>
+                </p>
+                <p className="mt-2 text-sm text-cream-dim">{plan.ideal}</p>
+                <ul className="mt-6 space-y-3 flex-1">
+                  {plan.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-sm text-cream-dim">
+                      <Check className="w-4 h-4 mt-0.5 text-acid shrink-0" aria-hidden="true" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href="/create"
+                  className={`mt-8 flex items-center justify-center min-h-12 rounded-full font-semibold transition-colors ${
+                    plan.featured
+                      ? "bg-acid text-ink hover:bg-cream"
+                      : "border border-line text-cream hover:border-cream-dim"
+                  }`}
+                >
+                  Demander un devis
+                </Link>
+              </motion.div>
+            ))}
+          </div>
         </section>
 
         {/* ————— CTA FINAL ————— */}
