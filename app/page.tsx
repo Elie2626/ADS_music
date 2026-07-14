@@ -205,8 +205,9 @@ export default function Home() {
 
           {/* Démo vidéo */}
           <motion.div
+            id="demo"
             {...fadeUp}
-            className="mt-6 rounded-2xl border border-acid/40 bg-ink-2 p-4 sm:p-6"
+            className="mt-6 rounded-2xl border border-acid/40 bg-ink-2 p-4 sm:p-6 scroll-mt-24"
           >
             <p className="font-mono text-xs text-acid tracking-[0.25em] uppercase mb-4">
               Regardez un exemple
