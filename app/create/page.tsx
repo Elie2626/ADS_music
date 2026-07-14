@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { saveDevis } from "@/lib/devis";
-import { BUDGET_RANGES, DEADLINES } from "@/lib/pricing";
+import { computeTotalPrice, DEADLINES, QUANTITY_OPTIONS } from "@/lib/pricing";
 import { DURATIONS, MOODS, MUSIC_STYLES } from "@/lib/styles";
 import type { DevisRequest, GeneratedQuote } from "@/app/api/devis/route";
 
@@ -57,8 +57,9 @@ export default function CreatePage() {
     styleId: "",
     mood: "",
     duration: 30,
+    quantity: 1,
     style: "",
-    budget: BUDGET_RANGES[1],
+    budget: "",
     deadline: DEADLINES[1],
     name: "",
     email: "",
@@ -71,6 +72,7 @@ export default function CreatePage() {
   };
 
   const selectedStyle = MUSIC_STYLES.find((s) => s.id === form.styleId);
+  const pricing = computeTotalPrice(form.duration, form.quantity);
 
   const validateStep = (): boolean => {
     const e: Record<string, string> = {};
@@ -109,7 +111,8 @@ export default function CreatePage() {
       message: form.message,
       style: `${selectedStyle?.name ?? ""} · ambiance ${form.mood}`,
       duration: form.duration,
-      budget: form.budget,
+      quantity: form.quantity,
+      budget: pricing.label,
       deadline: form.deadline,
       name: form.name,
       email: form.email,
@@ -367,6 +370,9 @@ export default function CreatePage() {
                                 {d.label}
                               </span>
                               <span className="block mt-1 text-xs text-cream-dim">{d.hint}</span>
+                              <span className="block mt-2 text-sm text-acid font-semibold tabular-nums">
+                                {computeTotalPrice(d.value, 1).tier.price}
+                              </span>
                             </button>
                           );
                         })}
@@ -378,37 +384,48 @@ export default function CreatePage() {
                 {/* Étape 3 — Projet vidéo + contact */}
                 {step === 3 && (
                   <motion.div key="s3" {...slide} className="mt-10 space-y-8">
-                    <div className="grid sm:grid-cols-2 gap-6">
-                      <div>
-                        <label htmlFor="budget" className="block text-sm font-medium mb-2">
-                          Budget
-                        </label>
-                        <select
-                          id="budget"
-                          value={form.budget}
-                          onChange={(e) => set("budget", e.target.value)}
-                          className={`${inputClass} cursor-pointer`}
-                        >
-                          {BUDGET_RANGES.map((b) => (
-                            <option key={b} value={b}>{b}</option>
-                          ))}
-                        </select>
+                    <fieldset>
+                      <legend className="text-sm font-medium mb-4">
+                        Nombre de vidéos souhaitées
+                      </legend>
+                      <div className="grid grid-cols-5 gap-2">
+                        {QUANTITY_OPTIONS.map((qty) => (
+                          <button
+                            key={qty}
+                            type="button"
+                            onClick={() => set("quantity", qty)}
+                            aria-pressed={form.quantity === qty}
+                            className={`min-h-12 rounded-xl border font-display text-lg tabular-nums transition-colors cursor-pointer ${
+                              form.quantity === qty
+                                ? "border-acid bg-acid/5 text-cream"
+                                : "border-line bg-ink-2 text-cream-dim hover:border-cream-dim"
+                            }`}
+                            style={{ fontWeight: 700, touchAction: "manipulation" }}
+                          >
+                            {qty}
+                          </button>
+                        ))}
                       </div>
-                      <div>
-                        <label htmlFor="deadline" className="block text-sm font-medium mb-2">
-                          Délai souhaité
-                        </label>
-                        <select
-                          id="deadline"
-                          value={form.deadline}
-                          onChange={(e) => set("deadline", e.target.value)}
-                          className={`${inputClass} cursor-pointer`}
-                        >
-                          {DEADLINES.map((d) => (
-                            <option key={d} value={d}>{d}</option>
-                          ))}
-                        </select>
-                      </div>
+                      <p className="mt-3 text-sm text-cream-dim">
+                        Prix estimé :{" "}
+                        <span className="text-acid font-semibold">{pricing.label}</span>
+                      </p>
+                    </fieldset>
+
+                    <div>
+                      <label htmlFor="deadline" className="block text-sm font-medium mb-2">
+                        Délai souhaité
+                      </label>
+                      <select
+                        id="deadline"
+                        value={form.deadline}
+                        onChange={(e) => set("deadline", e.target.value)}
+                        className={`${inputClass} cursor-pointer max-w-xs`}
+                      >
+                        {DEADLINES.map((d) => (
+                          <option key={d} value={d}>{d}</option>
+                        ))}
+                      </select>
                     </div>
 
                     <div className="border-t border-line pt-6 grid sm:grid-cols-3 gap-6">
@@ -493,8 +510,12 @@ export default function CreatePage() {
                           <dd className="text-right tabular-nums">{form.duration} s</dd>
                         </div>
                         <div className="flex justify-between gap-4">
-                          <dt className="text-cream-dim">Budget</dt>
-                          <dd className="text-right">{form.budget}</dd>
+                          <dt className="text-cream-dim">Vidéos</dt>
+                          <dd className="text-right tabular-nums">{form.quantity}</dd>
+                        </div>
+                        <div className="flex justify-between gap-4">
+                          <dt className="text-cream-dim">Prix estimé</dt>
+                          <dd className="text-right text-acid font-semibold">{pricing.label}</dd>
                         </div>
                       </dl>
                     </div>

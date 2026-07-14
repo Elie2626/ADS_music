@@ -48,6 +48,7 @@ export async function listDevis(userId: string): Promise<SavedDevis[]> {
       message: data.message,
       style: data.style,
       duration: data.duration,
+      quantity: data.quantity ?? 1,
       budget: data.budget,
       deadline: data.deadline,
       name: data.name,

@@ -29,6 +29,9 @@ export default function Footer() {
           <Link href="/#pricing" className="hover:text-cream transition-colors min-h-11 flex items-center">
             Tarifs
           </Link>
+          <Link href="/contact" className="hover:text-cream transition-colors min-h-11 flex items-center">
+            Contact
+          </Link>
         </nav>
       </div>
       <div className="text-center text-xs text-cream-dim/60 pb-6 font-mono">

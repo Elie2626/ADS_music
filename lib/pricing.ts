@@ -70,13 +70,34 @@ export const VIDEO_TIERS: VideoTier[] = [
 
 export const DEFAULT_TIER = VIDEO_TIERS[1];
 
-export const BUDGET_RANGES = [
-  "Moins de 500 €",
-  "500 € – 1 000 €",
-  "1 000 € – 2 000 €",
-  "Plus de 2 000 €",
-  "Je ne sais pas encore",
-] as const;
+/* Retrouve le forfait correspondant à une durée (secondes), ou le plus proche */
+export function tierForDuration(duration: number): VideoTier {
+  return (
+    VIDEO_TIERS.find((t) => t.durationSeconds === duration) ??
+    [...VIDEO_TIERS].sort(
+      (a, b) =>
+        Math.abs(a.durationSeconds - duration) - Math.abs(b.durationSeconds - duration)
+    )[0] ??
+    DEFAULT_TIER
+  );
+}
+
+export const QUANTITY_OPTIONS = [1, 2, 3, 4, 5] as const;
+
+/* Prix total = prix du forfait × nombre de vidéos souhaitées */
+export function computeTotalPrice(duration: number, quantity: number): {
+  tier: VideoTier;
+  total: number;
+  label: string;
+} {
+  const tier = tierForDuration(duration);
+  const total = tier.priceValue * quantity;
+  const label =
+    quantity > 1
+      ? `${total} € (${tier.price} × ${quantity} vidéos)`
+      : `${total} €`;
+  return { tier, total, label };
+}
 
 export const DEADLINES = [
   "Dès que possible",

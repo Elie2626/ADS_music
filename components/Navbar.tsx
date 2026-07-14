@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { href: "/#styles", label: "Styles" },
   { href: "/#process", label: "Comment ça marche" },
   { href: "/#pricing", label: "Tarifs" },
+  { href: "/contact", label: "Contact" },
 ] as const;
 
 export default function Navbar() {
