@@ -60,6 +60,10 @@ export async function sendEmail(params: {
       },
       body: JSON.stringify({ from, ...params }),
     });
+    if (!res.ok) {
+      const body = await res.text();
+      console.error(`[email] Resend a répondu ${res.status} :`, body);
+    }
     return res.ok;
   } catch (err) {
     console.error("[email] échec de l'envoi :", err);
