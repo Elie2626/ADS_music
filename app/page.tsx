@@ -127,49 +127,46 @@ export default function Home() {
             className="font-display text-3xl sm:text-5xl tracking-tight max-w-xl"
             style={{ fontWeight: 700 }}
           >
-            Le son, c&apos;est ce qui
+            Une pub oubliée
             <br />
-            <span className="text-acid">reste en tête.</span>
+            <span className="text-acid">ne rapporte rien.</span>
           </motion.h2>
 
-          <div className="mt-16 grid sm:grid-cols-3 gap-6">
+          <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {[
               {
-                num: "30%/95%",
-                audio: "Une seule écoute d'un jingle suffit à améliorer la mémorisation de la marque de plus de 30 %.",
-                video: "Les spectateurs retiennent 95 % d'un message vu en vidéo, contre 10 % seulement à l'écrit.",
+                num: "30%",
+                tag: "Audio",
+                text: "Une seule écoute d'un jingle suffit à améliorer la mémorisation de la marque de plus de 30 %.",
               },
               {
-                num: "46%/64%",
-                audio: "La musique utilisée efficacement en branding augmente la préférence de marque de 46 %.",
-                video: "64 % des consommateurs achètent après avoir vu une vidéo publicitaire de la marque.",
+                num: "80%",
+                tag: "Audio",
+                text: "Un jingle bien conçu peut faire grimper le taux de mémorisation d'une pub jusqu'à 80 %.",
               },
               {
-                num: "80%/84%",
-                audio: "Un jingle bien conçu peut faire grimper le taux de mémorisation d'une pub jusqu'à 80 %.",
-                video: "84 % des gens disent avoir été convaincus d'acheter après avoir regardé une vidéo de marque.",
+                num: "95%",
+                tag: "Vidéo",
+                text: "Les spectateurs retiennent 95 % d'un message vu en vidéo, contre 10 % seulement à l'écrit.",
+              },
+              {
+                num: "84%",
+                tag: "Vidéo",
+                text: "84 % des gens disent avoir été convaincus d'acheter après avoir regardé une vidéo de marque.",
               },
             ].map((stat, i) => (
               <motion.figure
-                key={stat.num}
+                key={stat.num + stat.tag}
                 {...fadeUp}
-                transition={{ ...fadeUp.transition, delay: i * 0.12 }}
-                className="stat-card rounded-2xl border border-line bg-ink-2 p-8 hover:border-acid/40 transition-colors"
+                transition={{ ...fadeUp.transition, delay: i * 0.1 }}
+                className="stat-card rounded-2xl border border-line bg-ink-2 p-5 sm:p-8 hover:border-acid/40 transition-colors"
               >
+                <span className="font-mono text-[10px] tracking-widest uppercase text-acid">
+                  {stat.tag}
+                </span>
                 <StatNumber3D label={stat.num} />
-                <figcaption className="mt-4 space-y-3 text-sm text-cream-dim leading-relaxed">
-                  <p>
-                    <span className="font-mono text-[10px] tracking-widest uppercase text-acid">
-                      Audio
-                    </span>{" "}
-                    — {stat.audio}
-                  </p>
-                  <p>
-                    <span className="font-mono text-[10px] tracking-widest uppercase text-acid">
-                      Vidéo
-                    </span>{" "}
-                    — {stat.video}
-                  </p>
+                <figcaption className="mt-2 sm:mt-4 text-xs sm:text-sm text-cream-dim leading-relaxed">
+                  {stat.text}
                 </figcaption>
               </motion.figure>
             ))}
