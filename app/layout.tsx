@@ -22,6 +22,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.wavore.com"),
   title: "WAVORE — Pubs musicales et vidéo générées par IA",
   description:
     "Créez la pub complète de votre entreprise — jingle et vidéo — en quelques minutes. Choisissez le style, l'ambiance, la durée — nous créons, vous diffusez.",
@@ -34,6 +35,9 @@ export const metadata: Metadata = {
     apple: "/apple-icon.png",
   },
   manifest: "/manifest.webmanifest",
+  verification: {
+    google: "Zct7Amwnuv3ai0rHhtr9hJPj67qMzi-n_aZxNeIPK64",
+  },
 };
 
 export default function RootLayout({
