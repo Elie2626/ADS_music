@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, Mail } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ContactForm from "@/components/ContactForm";
 
 export const metadata: Metadata = {
   title: "Contact — WAVORE",
@@ -29,36 +30,22 @@ export default function ContactPage() {
             <span className="text-acid">Écrivez-nous.</span>
           </h1>
           <p className="mt-5 text-cream-dim max-w-lg leading-relaxed">
-            Pour toute question sur votre projet, un devis en cours ou une
-            demande spécifique, notre équipe vous répond rapidement.
+            Remplissez le formulaire ci-dessous, notre équipe vous répond
+            rapidement à l&apos;adresse que vous indiquez.
           </p>
 
-          <div className="mt-10 rounded-2xl border border-acid/40 bg-ink-2 p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-6 justify-between">
-            <div className="flex items-center gap-4">
-              <span className="shrink-0 w-12 h-12 rounded-full bg-acid/15 text-acid flex items-center justify-center">
-                <Mail className="w-5 h-5" aria-hidden="true" />
-              </span>
-              <div>
-                <p className="font-mono text-xs tracking-widest uppercase text-cream-dim">
-                  Email
-                </p>
-                <a
-                  href={`mailto:${CONTACT_EMAIL}`}
-                  className="font-display text-xl sm:text-2xl text-cream hover:text-acid transition-colors"
-                  style={{ fontWeight: 700 }}
-                >
-                  {CONTACT_EMAIL}
-                </a>
-              </div>
-            </div>
+          <ContactForm />
+
+          <p className="mt-6 flex items-center gap-2 text-sm text-cream-dim">
+            <Mail className="w-4 h-4 text-acid shrink-0" aria-hidden="true" />
+            Vous pouvez aussi nous écrire directement à{" "}
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="shrink-0 flex items-center gap-2 min-h-12 px-6 rounded-full bg-acid text-ink font-semibold hover:bg-cream transition-colors"
+              className="text-acid underline hover:text-cream"
             >
-              Envoyer un email
-              <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              {CONTACT_EMAIL}
             </a>
-          </div>
+          </p>
 
           <div className="mt-6 rounded-2xl border border-line bg-ink-2 p-6 sm:p-8">
             <h2 className="font-display text-xl" style={{ fontWeight: 600 }}>
@@ -66,8 +53,8 @@ export default function ContactPage() {
             </h2>
             <p className="mt-2 text-sm text-cream-dim leading-relaxed">
               Pour une demande de devis personnalisé, passez plutôt par notre
-              formulaire — vous recevrez une proposition détaillée directement
-              par email.
+              formulaire dédié — vous recevrez une proposition détaillée
+              directement par email.
             </p>
             <Link
               href="/create"
