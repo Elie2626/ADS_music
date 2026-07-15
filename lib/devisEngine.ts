@@ -193,7 +193,7 @@ export async function sendDevisEmails(
     const filename = `devis-wavore-${req.company.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.pdf`;
     const attachments = [{ filename, content: pdfBase64 }];
 
-    const [clientSent] = await Promise.all([
+    const [clientSent, ownerSent] = await Promise.all([
       sendEmail({
         to: req.email,
         subject: `Votre devis WAVORE pour ${req.company}`,
@@ -207,6 +207,9 @@ export async function sendDevisEmails(
         attachments,
       }),
     ]);
+    if (!ownerSent) {
+      console.error(`[devis] échec de l'envoi au propriétaire (${owner})`);
+    }
     return clientSent;
   } catch (err) {
     console.error("[devis] échec de l'envoi des emails :", err);
