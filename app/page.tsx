@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Faq from "@/components/Faq";
 import { MUSIC_STYLES } from "@/lib/styles";
 import { VIDEO_TIERS } from "@/lib/pricing";
 
@@ -404,6 +405,24 @@ export default function Home() {
               </motion.div>
             ))}
           </div>
+        </section>
+
+        {/* ————— FAQ ————— */}
+        <section id="faq" className="mx-auto max-w-7xl px-4 sm:px-6 pb-28">
+          <motion.h2
+            {...fadeUp}
+            className="font-display text-3xl sm:text-5xl tracking-tight"
+            style={{ fontWeight: 700 }}
+          >
+            Questions fréquentes<span className="text-acid">.</span>
+          </motion.h2>
+          <motion.p {...fadeUp} className="mt-4 text-cream-dim max-w-lg">
+            Tout ce qu&apos;il faut savoir avant de commander votre pub.
+          </motion.p>
+
+          <motion.div {...fadeUp}>
+            <Faq />
+          </motion.div>
         </section>
 
         {/* ————— CTA FINAL ————— */}

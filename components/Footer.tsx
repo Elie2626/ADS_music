@@ -29,6 +29,9 @@ export default function Footer() {
           <Link href="/#pricing" className="hover:text-cream transition-colors min-h-11 flex items-center">
             Tarifs
           </Link>
+          <Link href="/affiliation" className="hover:text-cream transition-colors min-h-11 flex items-center">
+            Parrainage
+          </Link>
           <Link href="/contact" className="hover:text-cream transition-colors min-h-11 flex items-center">
             Contact
           </Link>
