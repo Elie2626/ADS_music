@@ -37,8 +37,18 @@ export default function Footer() {
           </Link>
         </nav>
       </div>
-      <div className="text-center text-xs text-cream-dim/60 pb-6 font-mono">
-        © {new Date().getFullYear()} WAVORE — tous droits réservés
+      <div className="flex flex-col items-center gap-2 pb-6">
+        <div className="flex items-center gap-4 text-xs text-cream-dim/80">
+          <Link href="/mentions-legales" className="hover:text-cream transition-colors min-h-11 flex items-center">
+            Mentions légales
+          </Link>
+          <Link href="/confidentialite" className="hover:text-cream transition-colors min-h-11 flex items-center">
+            Confidentialité
+          </Link>
+        </div>
+        <div className="text-center text-xs text-cream-dim/60 font-mono">
+          © {new Date().getFullYear()} WAVORE — tous droits réservés
+        </div>
       </div>
     </footer>
   );
