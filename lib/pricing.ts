@@ -30,7 +30,7 @@ export const VIDEO_TIERS: VideoTier[] = [
       "Montage vidéo animé (logo + visuels)",
       "Format vertical 9:16",
       "Pas satisfait ? 1 changement disponible",
-      "Livraison en 5 jours",
+      "Livraison en 24 h",
     ],
   },
   {
@@ -46,7 +46,7 @@ export const VIDEO_TIERS: VideoTier[] = [
       "Montage vidéo animé (logo + visuels)",
       "Formats vertical, carré et paysage",
       "Pas satisfait ? 2 changements disponibles",
-      "Livraison en 5 jours",
+      "Livraison en 48 h",
     ],
     featured: true,
   },
@@ -63,7 +63,7 @@ export const VIDEO_TIERS: VideoTier[] = [
       "Montage vidéo animé (logo + visuels)",
       "Tous formats (vertical, carré, paysage)",
       "Pas satisfait ? 3 changements disponibles",
-      "Livraison en 7 jours",
+      "Livraison en 3 à 5 jours",
     ],
   },
 ];

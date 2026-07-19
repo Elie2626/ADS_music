@@ -14,6 +14,7 @@ import {
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Faq from "@/components/Faq";
+import Testimonials from "@/components/Testimonials";
 import { MUSIC_STYLES } from "@/lib/styles";
 import { VIDEO_TIERS } from "@/lib/pricing";
 
@@ -338,6 +339,9 @@ export default function Home() {
             ))}
           </div>
         </section>
+
+        {/* ————— TÉMOIGNAGES ————— */}
+        <Testimonials />
 
         {/* ————— PRICING ————— */}
         <section id="pricing" className="mx-auto max-w-7xl px-4 sm:px-6 pb-28">

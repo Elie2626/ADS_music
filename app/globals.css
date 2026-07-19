@@ -45,6 +45,13 @@ body {
 .animate-marquee {
   animation: marquee 30s linear infinite;
 }
+/* Variante lente pour les cartes de témoignages (plus larges que les mots du marquee) */
+.animate-marquee-slow {
+  animation: marquee 55s linear infinite;
+}
+.animate-marquee-slow:hover {
+  animation-play-state: paused;
+}
 /* Equalizer bars (loading / playing) */
 @keyframes eq {
   0%, 100% { transform: scaleY(0.3); }
@@ -56,6 +63,7 @@ body {
 }
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee,
+  .animate-marquee-slow,
   .eq-bar {
     animation: none;
   }

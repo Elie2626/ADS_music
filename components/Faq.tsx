@@ -18,7 +18,7 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: "Combien de temps pour recevoir ma pub ?",
     answer:
-      "Comptez 5 à 7 jours après validation du concept envoyé dans votre devis, selon la formule choisie.",
+      "Selon la formule : 24 h pour une pub de 15 s, 48 h pour 30 s, et 3 à 5 jours pour 1 min, après validation du concept envoyé dans votre devis.",
   },
   {
     question: "Comment se passe la commande ?",

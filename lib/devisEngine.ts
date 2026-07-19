@@ -30,12 +30,14 @@ function fallbackQuote(req: DevisRequest): GeneratedQuote {
   const { tier, label } = computeTotalPrice(req.duration, req.quantity);
   const qtyText =
     req.quantity > 1 ? `${req.quantity} vidéos déclinées` : "une vidéo";
+  const delay =
+    tier.durationSeconds === 15 ? "24 h" : tier.durationSeconds === 30 ? "48 h" : "3 à 5 jours";
   return {
     intro: `Merci ${req.name} pour votre demande concernant ${req.company}. Voici votre proposition pour votre pub.`,
     concept: `Une pub ${req.style.toLowerCase()} mettant en avant « ${req.message} », pensée pour le secteur ${req.sector || "de votre activité"}, avec un jingle WAVORE sur mesure et un montage rythmé à votre image (${qtyText}).`,
     recommendedTier: tier.name,
     priceRange: label,
-    timeline: "Livraison estimée sous 7 jours après validation du concept.",
+    timeline: `Livraison estimée sous ${delay} après validation du concept.`,
     steps: [
       "Échange de cadrage (15 min) pour affiner le message et le ton",
       "Création du jingle + storyboard de la vidéo",
