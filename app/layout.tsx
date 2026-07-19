@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque, Instrument_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import WavoreAssistant from "@/components/WavoreAssistant";
+import { ORGANIZATION_SCHEMA, WEBSITE_SCHEMA } from "@/lib/structured-data";
 
 const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
@@ -51,6 +52,12 @@ export default function RootLayout({
       className={`${bricolage.variable} ${instrument.variable} ${jetbrains.variable} h-full antialiased`}
     >
       <body className="min-h-dvh flex flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify([ORGANIZATION_SCHEMA, WEBSITE_SCHEMA]),
+          }}
+        />
         <a
           href="#contenu"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-acid focus:text-ink focus:px-4 focus:py-2 focus:rounded-md focus:font-medium"

@@ -17,6 +17,7 @@ import Faq from "@/components/Faq";
 import Testimonials from "@/components/Testimonials";
 import { MUSIC_STYLES } from "@/lib/styles";
 import { VIDEO_TIERS } from "@/lib/pricing";
+import { FAQ_SCHEMA, PRODUCT_SCHEMA } from "@/lib/structured-data";
 
 const Scene3D = dynamic(() => import("@/components/Scene3D"), { ssr: false });
 const StatNumber3D = dynamic(() => import("@/components/StatNumber3D"), { ssr: false });
@@ -38,6 +39,12 @@ export default function Home() {
   return (
     <>
       <Navbar />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([PRODUCT_SCHEMA, FAQ_SCHEMA]),
+        }}
+      />
       <main id="contenu" className="flex-1">
         {/* ————— HERO ————— */}
         <section className="relative min-h-dvh flex items-center overflow-hidden">
