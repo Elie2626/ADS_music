@@ -52,6 +52,11 @@ body {
 .animate-marquee-slow:hover {
   animation-play-state: paused;
 }
+/* Fenêtre du marquee des avis : cache le débordement quand l'animation tourne,
+   redevient défilable à la main si les animations sont désactivées */
+.marquee-viewport {
+  overflow-x: hidden;
+}
 /* Equalizer bars (loading / playing) */
 @keyframes eq {
   0%, 100% { transform: scaleY(0.3); }
@@ -66,6 +71,10 @@ body {
   .animate-marquee-slow,
   .eq-bar {
     animation: none;
+  }
+  .marquee-viewport {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
   html {
     scroll-behavior: auto;

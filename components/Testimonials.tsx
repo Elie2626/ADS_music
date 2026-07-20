@@ -113,7 +113,7 @@ export default function Testimonials() {
       </div>
 
       {/* Bande défilante : liste dupliquée pour une boucle sans couture, pause au survol */}
-      <div className="mt-10 overflow-hidden" aria-label="Avis de nos clients">
+      <div className="mt-10 marquee-viewport" aria-label="Avis de nos clients">
         <div className="animate-marquee-slow flex w-max items-stretch gap-6 px-4 sm:px-6">
           {[...TESTIMONIALS, ...TESTIMONIALS].map((t, i) => (
             <div key={`${t.company}-${i}`} aria-hidden={i >= TESTIMONIALS.length}>
