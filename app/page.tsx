@@ -74,7 +74,7 @@ export default function Home() {
               className="font-display max-w-3xl text-5xl sm:text-7xl lg:text-8xl leading-[0.95] tracking-tight"
               style={{ fontWeight: 800 }}
             >
-              Votre marque
+              Votre business
               <br />
               mérite son <span className="text-acid italic">Clip</span>
             </motion.h1>
